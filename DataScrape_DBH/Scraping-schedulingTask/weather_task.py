@@ -72,7 +72,22 @@ json_str = json.dumps(weather_Json, indent=3)
 # DBSession = sessionmaker(bind=engine)
 
 
+# specify the connection parameters
+username = 'masterAdmin'
+password = '4hvJWtw1P4cV7Xm0JQno'
+host = 'database-ddrangers.cftjf3yfdzfx.eu-west-1.rds.amazonaws.com'
+port = 3306
+database_name = 'DBH_schema'
 
+# create the connection string
+connection_string = f'mysql+pymysql://{username}:{password}@{host}:{port}/{database_name}'
+
+# create the engine object
+engine = create_engine(connection_string)
+
+# test the connection to the database
+insp = inspect(engine)
+print("The mysql database name in AWS:", insp.get_table_names())
 
 
 
