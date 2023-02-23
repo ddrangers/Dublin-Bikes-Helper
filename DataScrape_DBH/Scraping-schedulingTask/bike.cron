@@ -1,1 +1,1 @@
-*/1 * * * * python3 new2_get_bike.py
+*/5 * * * * python3 new2_get_bike.py
