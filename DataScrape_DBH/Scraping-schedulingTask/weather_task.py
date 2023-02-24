@@ -17,8 +17,6 @@ from sqlalchemy import MetaData
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-
-
 # ---------------------------- Weather scraping task using OpenweatherAPI ---------------------------------
 # Get the coordinate of Dublin city from Geocoding API
 token = "06070e53f0b195fef92272b71f2c0963"
@@ -44,7 +42,7 @@ response_rawWeather = requests.get(url)
 
 # check the response status
 response_statusCode2 = response_rawWeather.status_code
-print(response_statusCode2)  # return 200 means OK
+print("weather API response code:", response_statusCode2)  # return 200 means OK
 
 # Get the weather JSON data
 response_weather = response_rawWeather.text
@@ -55,18 +53,19 @@ json_str = json.dumps(weather_Json, indent=3)
 
 # ---------------------------- store the weather information into database ---------------------------------
 
-# ------------ 1. Establish SQLAlchemy to AWS Connection ------------
+# ------------ 1. Connect to the database in RDS ------------
+# reading the config file
+with open("config.json", "r") as jsonfile:
+    configFile = json.load(jsonfile)
+    print("successfully loading Json config file...")
+print("reading config file:", configFile)
+username = configFile['username']
+password = configFile['password']
+host = configFile['host']
+port = configFile['port']
+database_name = configFile['database_name']
 
-# specify the connection parameters
-# TODO: move the connection info to the config file
-username = 'masterAdmin'
-password = '4hvJWtw1P4cV7Xm0JQno'
-host = 'database-ddrangers.cftjf3yfdzfx.eu-west-1.rds.amazonaws.com'
-port = 3306
-database_name = 'DBH_schema'
-
-# initializing DB connection ("'数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'")
-# create the connection string:  mysql+pymysql://<username>:<password>@<host>/<database_name>
+# assemble the connection string
 connection_string = f'mysql+pymysql://{username}:{password}@{host}:{port}/{database_name}'
 
 # create the engine (Engine can create new database connections, which holds the connections in Connection Pool
@@ -79,63 +78,33 @@ print("The sqlalchemy version installed is:", sqlalchemy.__version__)
 inspectObj = inspect(engine)
 print("The mysql database name in AWS:", inspectObj.get_table_names())
 
-# test retrieve a row of data
-mysqlRequest = text("SELECT id, coord_lat, coord_lon, weather_id, weather_main, creat_time  FROM weather_info WHERE weather_info.weather_id = '803'")
+# Mysql alchemy - core: test retrieve a row of data
+mysqlTestRequest = text(
+    "SELECT id, coord_lat, coord_lon, weather_id, weather_main, creat_time  FROM weather_info WHERE weather_info.weather_id = '803'")
 with Session(engine) as session:
-    result = session.execute(mysqlRequest)
+    result = session.execute(mysqlTestRequest)
     for row in result:
-        print("the retrieved weather_id is", row.weather_id)
+        print("The retrieved weather_id is", row.weather_id)
 
 
+# ------------ 2. initialize SQLAlchemy DB-Session and define each table's field ------------
 
-
-
-
-
-
-
-
-
-
-
-
-# # ------------ 2. initialize SQLAlchemy DB-Session and define each table's field ------------
-#
-# # Create base object from sqlalchemy
-# # Declarative Mapping, defines a Python object model, as well as database metadata that describes real SQL tables.
+# Create base object from sqlalchemy
+# Declarative Mapping, defines a Python object model, as well as database metadata that describes real SQL tables.
 # class Base(DeclarativeBase):  # acquire a new Declarative Base which subclasses the SQLAlchemy DeclarativeBase class
 #     pass
-#
-#
-# # Individual mapped classes(weatherInfo) are then created by making subclasses of Base
-# # The mapped class is any Python class we’d like to create, which will then have attributes on it that will be linked to the columns in a database table.
-# class WeatherInfo(Base):
-#     # Table name
-#     __tablename__ = "weather_info"
-#
-#     # Define table field
-#     id: Mapped[BINARY(16)] = mapped_column(primary_key=True)   # To indicate columns in the Table, use the mapped_column() construct
-#     coord_lon: Mapped[str] = mapped_column(String(20))
-#     coord_lat: Mapped[str] = mapped_column(String(20))
-#     weather_id: Mapped[int] = mapped_column()
-#     weather_main: Mapped[int] = mapped_column(String(20))
-#     temp: Mapped[float] = mapped_column(Float)
-#     temp_feel: Mapped[float] = mapped_column(Float)
-#     wind_speed: Mapped[float] = mapped_column(Float)
-#     clouds: Mapped[int] = mapped_column()
-#     sunrise: Mapped[DateTime] = relationship()
-#     sunset: Mapped[DateTime] = relationship()
-#     creat_time: Mapped[DateTime] = relationship()
-#     delete_flag: Mapped[Boolean] = relationship()
-#
-#
-#
-# # 创建DBSession类型:
+
+
+
+# insertWeatherObj = WeatherInfo(id="", coord_lon="23333", coord_lat="23333", weather_id="2333", weather_main="2333",
+#                                temp="233.3", temp_feel="233.3", wind_speed="233.3", clouds="23")
+
+# 创建DBSession类型:
 # DBSession = sessionmaker(bind=engine)
-#
-# # ------------ 3. after creating engine and sessionMaker, add the data to the database ---------------
-# # get the session, add the object in the session, commit and close the session.
-#
+
+# ------------ 3. after creating engine and sessionMaker, add the data to the database ---------------
+# get the session, add the object in the session, commit and close the session.
+
 # # test: query to aws rds
 # # 创建session对象:
 # session = DBSession()
@@ -145,15 +114,15 @@ with Session(engine) as session:
 # print('temp:', WeatherInfo.temp)
 # # 关闭Session:
 # session.close()
-# #
-# # # # Add the weather json data to the mysql database
-# # # # creat session:
-# # # session = DBSession()
-# # # # creat weather info obj:
-# # # new_weatherInfo = weatherInfo(id='5', name='Bob')
-# # # # add the obj to session:
-# # # session.add(new_weatherInfo)
-# # # # commit the change to the RDS AWS:
-# # # session.commit()
-# # # # close the session:
-# # # session.close()
+#
+# # # Add the weather json data to the mysql database
+# # # creat session:
+# # session = DBSession()
+# # # creat weather info obj:
+# # new_weatherInfo = weatherInfo(id='5', name='Bob')
+# # # add the obj to session:
+# # session.add(new_weatherInfo)
+# # # commit the change to the RDS AWS:
+# # session.commit()
+# # # close the session:
+# # session.close()
