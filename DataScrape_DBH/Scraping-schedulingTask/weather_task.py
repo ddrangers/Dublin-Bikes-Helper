@@ -11,7 +11,12 @@ from sqlalchemy.orm import Session
 
 # ------------------------------------- Weather scraping task using OpenweatherAPI -------------------------------------
 # Get the coordinate of Dublin city from Geocoding API
-token = "06070e53f0b195fef92272b71f2c0963"
+# reading the config file to get the token
+with open("config.json", "r") as jsonfile:
+    configFile = json.load(jsonfile)
+    print("successfully loading Json config file...")
+print("reading config file:", configFile)
+token = configFile['weather_token']
 url1 = f'http://api.openweathermap.org/geo/1.0/direct?q=Dublin&limit=1&appid={token}'
 response_geo = requests.get(url1)
 
@@ -30,7 +35,10 @@ lat = coordinate_Json[0]['lat']
 
 # invoke the weather API Using existing coordinate
 url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={token}'  # Current weather data API
-response_rawWeather = requests.get(url)
+try:
+    response_rawWeather = requests.get(url)
+except Exception as e:
+    print(e)
 
 # check the response status
 response_statusCode2 = response_rawWeather.status_code
