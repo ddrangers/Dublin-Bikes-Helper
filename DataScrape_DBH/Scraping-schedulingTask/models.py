@@ -35,23 +35,33 @@ class weatherInfo(Base):
     delete_flag: Mapped[int] = mapped_column(DateTime)
 
 
+class bikeInfo(Base):
 
-# reading the config file to construct engine
-with open("config.json", "r") as jsonfile:
-    configFile = json.load(jsonfile)
-    print("successfully loading Json config file...")
-print("reading config file:", configFile)
-username = configFile['username']
-password = configFile['password']
-host = configFile['host']
-port = configFile['port']
-database_name = configFile['database_name']
+    __tablename__ = "bike_info"
 
-# assemble the connection string
-connection_string = f'mysql+pymysql://{username}:{password}@{host}:{port}/{database_name}'
-# The Engine is a factory that can create new database connections for us, which also holds onto connections in Connection Pool for fast reuse.
-engine = create_engine(connection_string, echo=True)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    number: Mapped[int] = mapped_column()
+    name: Mapped[str] = mapped_column(String(40))
+    address: Mapped[str] = mapped_column(String(40))
+    bike_stand: Mapped[int] = mapped_column()
+    bike_stand_available: Mapped[int] = mapped_column()
+    bike_available: Mapped[int] = mapped_column()
+    status: Mapped[str] = mapped_column(String(40))
+    last_update: Mapped[datetime] = mapped_column(DateTime)
+    creat_time: Mapped[datetime] = mapped_column(DateTime)
+    delete_flag: Mapped[int] = mapped_column(DateTime)
 
-# Before insert data into the mysql. make sure the database are created in the DB
-# generate our schema (PRAGMA statements are run, but no new tables are generated since they are found to be present already)
-Base.metadata.create_all(engine)
+
+
+class bikeStatic(Base):
+
+    __tablename__ = "bike_static"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    indexNumber: Mapped[int] = mapped_column()
+    name: Mapped[str] = mapped_column(String(40))
+    address: Mapped[str] = mapped_column(String(40))
+    location_lat: Mapped[float] = mapped_column()
+    location_lon: Mapped[float] = mapped_column()
+    creat_time: Mapped[datetime] = mapped_column(DateTime)
+    delete_flag: Mapped[int] = mapped_column(DateTime)
