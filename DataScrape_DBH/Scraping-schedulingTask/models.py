@@ -36,7 +36,6 @@ class weatherInfo(Base):
 
 
 class bikeInfo(Base):
-
     __tablename__ = "bike_info"
 
     id: Mapped[str] = mapped_column(String, primary_key=True)
@@ -54,7 +53,6 @@ class bikeInfo(Base):
 
 
 class bikeStatic(Base):
-
     __tablename__ = "bike_static"
 
     id: Mapped[str] = mapped_column(String, primary_key=True)
