@@ -5,7 +5,6 @@
 # So,I upload a py file.
 
 
-
 import schedule
 import time
 
