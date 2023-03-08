@@ -16,6 +16,7 @@ body {
     height: 100%;
     margin: 3px;
     padding: 0;
+    background-color: lightblue;
 }
 
 /* Create left detail area */
@@ -25,4 +26,16 @@ body {
     float: left;
     width: 24%;
     height: 85%;
+}
+
+#headLine {
+    text-align: center;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 50px;
+}
+
+#teamMember{
+    font-weight: bold;
+    text-align: right;
+
 }

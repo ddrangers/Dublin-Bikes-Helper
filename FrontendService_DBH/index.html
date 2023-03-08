@@ -10,6 +10,11 @@
     <script src="app.js"></script>
     <!--  link the external JavaScript file -->
     <script src="jquery.main.js"></script>
+    <!--  link the external fonts file from Google  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 </head>
 
 
@@ -18,11 +23,14 @@
 <body>
     <header>
         <div>
-            <h1 style="text-align: center">Welcome to Dublin bike helper</h1>
+            <p id="headLine">Welcome to Dublin bike helper</p>
+            <p id="teamMember">Team 16:  Cormac Lynch, Jingao Liu, Yongjie Lyu</p>
         </div>
     </header>
 
-    <div id="stationDetail">Station Detail</div>
+    <div id="stationDetail">
+        <h3 style="margin-top: 80px">Station Detail</h3>
+    </div>
     <div id="map"></div>
     <!-- 1.important to get the sequence right. The Google Maps api starts your code when the loading is finished and the
          callback function is executed
