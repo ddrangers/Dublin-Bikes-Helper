@@ -1,6 +1,10 @@
 import json
 from flask import Flask
-from sqlalchemy import create_engine, select, MetaData, Table
+from sqlalchemy import create_engine, select, MetaData, Table, text
+import pandas as pd
+
+
+
 app = Flask(__name__)
 
 
@@ -30,6 +34,7 @@ def index():
     #
     # # query the data for specified columns
     # stmt = select([getattr(bike_static_test.c, column) for column in columns])
+    sql1 = "SELECT a.indexNumber, a.name, a.location_lat, a.location_lon AS `bike_static_table` FROM bike_static as a;"
 
     stmt = select(
         bike_static_test.c.indexNumber,
@@ -39,14 +44,15 @@ def index():
         bike_static_test.c.location_lon
     )
 
-    # execute the query and get result
     with engine.connect() as conn:
-        results = conn.execute(stmt).fetchall()
+        for row in conn.execute(stmt):
+            print(row)
 
-    # turn the format of result to json
-    json_results = json.dumps([dict(row) for row in results])
-
-    return json_results
+    print("------------------------------------------")
+    sql = text(sql1)
+    df = pd.read_sql(sql, con=engine.connect())
+    print(df)
+    return df.to_json(orient="records")
 
 
 @app.route('/contact')
