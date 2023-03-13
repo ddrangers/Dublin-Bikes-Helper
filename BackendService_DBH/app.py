@@ -2,13 +2,13 @@ import json
 from flask import Flask
 from sqlalchemy import create_engine, select, MetaData, Table, text
 import pandas as pd
-
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 
-
-@app.route('/')
+@app.route('/stations')
 def index():
     # get db connection
     # engine = create_engine('postgresql://masterAdmin:4hvJWtw1P4cV7Xm0JQno@database-ddrangers.cftjf3yfdzfx.eu-west-1.rds.amazonaws.com:3306/bike_static_test')
@@ -61,7 +61,7 @@ def contact():
     return "app.send_static_file(‘contact.html')"
 
 
-@app.route('/stations')
+@app.route('/stationsDetail')
 def stations():
     # get db connection
     return "list of stations"
