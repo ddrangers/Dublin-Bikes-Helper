@@ -34,7 +34,7 @@ def index():
     #
     # # query the data for specified columns
     # stmt = select([getattr(bike_static_test.c, column) for column in columns])
-    sql1 = "SELECT a.indexNumber, a.name, a.location_lat, a.location_lon AS `bike_static_table` FROM bike_static as a;"
+    sql1 = "SELECT a.indexNumber, a.name, a.location_lat, a.location_lon FROM bike_static as a;"
 
     stmt = select(
         bike_static_test.c.indexNumber,
