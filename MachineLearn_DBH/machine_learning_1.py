@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import time
 import datetime
+import sys
 
 ## Function to convert day number to day
 def convert_day(num):
@@ -73,40 +74,50 @@ df["MONTH"] = df["TIME"].dt.month
 df["HOUR"] = df["TIME"].dt.hour
 df["MINUTE"] = df["TIME"].dt.minute
 
+#Check BIke availability or Bike Parking Availability
+req = input("Do you want to check for Bike Availability (Type: bike) or Parking Availability (Type: park): ")
+if req == 'bike' or req == 'Bike' or req == 'park' or req == 'Park':
 
-df.loc[(df['STATION ID']==25),'NAME'].values[0]
+    ## Set up Search Parameters (Station ID, Day) 
+    month_num = 10
 
-## Set up Search Parameters (Station ID, Day) 
-month_num = 10
+    #Day of the week
+    day_num = int(input("Enter Day Number (1 = Mon, 2 = Tues etc): "))
+    #Minute pass the hour
+    #min_num = int(input("Enter Minute pass the hour (0 - 15 - 30 - 45): "))
+    #Station ID
+    stationid = int(input("Enter Station ID (1 to 113): "))
 
-#Day of the week
-day_num = int(input("Enter Day Number (1 = Mon, 2 = Tues etc): "))
-#Station ID
-stationid = int(input("Enter Station ID (1 to 113): "))
+    try:
+        stationname = df.loc[(df['STATION ID']==stationid),'NAME'].values[0]
 
-try:
-    stationname = df.loc[(df['STATION ID']==stationid),'NAME'].values[0]
+        #Filter data based on certain input parameters
+        df['station_select'] = (df['YEAR']==2021) & (df['MONTH']==month_num) & (df['DAY_num']==day_num) & (df['MINUTE']==45) & (df['STATION ID']==stationid)
 
-    #Filter data based on certain input parameters
-    df['station_select'] = (df['YEAR']==2021) & (df['MONTH']==month_num) & (df['DAY_num']==day_num) & (df['MINUTE']==0) & (df['STATION ID']==stationid)
+        ## Set up x- and y-axis of Plot
+        x =df['HOUR'].loc[df['station_select']]
+        if req == 'bike' or req == 'Bike':
+            y = df['AVAILABLE BIKES'].loc[df['station_select']]
+            plt.ylabel("Bike Availability")
+            plt.title(f'Likely Bike Availability \nfor {stationname} \non a {convert_day(day_num)}')
+        elif req == 'park' or req == 'Park':
+            y = df['AVAILABLE BIKE STANDS'].loc[df['station_select']]
+            plt.ylabel("Bike Parking Availability")
+            plt.title(f'Likely Bike Parking Availability \nfor {stationname} \non {convert_day(day_num)}')
 
-    ## Set up x- and y-axis of Plot
-    x =df['HOUR'].loc[df['station_select']]
-    y = df['AVAILABLE BIKES'].loc[df['station_select']]
+        #Set Up Plot
+        plt.xlabel("Time (24 hours)")
+        c=['blue','blue','blue','blue','blue','blue','blue','blue','red','red','red','red','red','red','red','red','red','red','blue','blue','blue','blue','blue','blue']
+        ytick = np.array([0, 2, 4, 6,8,10,12,14,16,18,20,22,24,26,28,30])
+        xtick = np.array([0, 4, 8, 12,16,20,24])
+        plt.xticks(xtick)
+        plt.yticks(ytick)
+        plt.xlim(0,24)
+        plt.bar(x,y,color=c)
+        plt.show()
 
-    #Set Up Plot
-    plt.ylabel("Bike Availability")
-    plt.xlabel("Time (24 hours)")
-    c=['blue','blue','blue','blue','blue','blue','blue','blue','red','red','red','red','red','red','red','red','red','red','blue','blue','blue','blue','blue','blue']
-    ytick = np.array([0, 2, 4, 6,8,10,12,14,16,18,20,22,24,26,28,30])
-    xtick = np.array([0, 4, 8, 12,16,20,24])
-    plt.xticks(xtick)
-    plt.yticks(ytick)
-    plt.xlim(0,24)
-    plt.bar(x,y,color=c)
-    plt.suptitle(f'Historical Bike Availability for {stationname}')
-    plt.title(f' on a {convert_day(day_num)}')
-    plt.show()
-
-except:
-    print ("Station ID Does not exist")
+    except:
+        print ("Station ID Does not exist")
+    
+else:
+    print("Incorrect Entry")
