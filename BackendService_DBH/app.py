@@ -23,7 +23,7 @@ def index():
     engine = create_engine(connection_string, echo=True)
     # creat database object
     metadata = MetaData()
-    bike_static_test = Table('bike_static_test', metadata, autoload_with=engine)
+    bike_static = Table('bike_static', metadata, autoload_with=engine)
 
     # # the column we need
     # columns = ['indexNumber', 'name', 'address', 'location_lat', 'location_lon']
@@ -32,11 +32,11 @@ def index():
     # stmt = select([getattr(bike_static_test.c, column) for column in columns])
 
     stmt = select(
-        bike_static_test.c.indexNumber,
-        bike_static_test.c.name,
-        bike_static_test.c.address,
-        bike_static_test.c.location_lat,
-        bike_static_test.c.location_lon
+        bike_static.c.indexNumber,
+        bike_static.c.name,
+        bike_static.c.address,
+        bike_static.c.location_lat,
+        bike_static.c.location_lon
     )
 
     # execute the query and get result
