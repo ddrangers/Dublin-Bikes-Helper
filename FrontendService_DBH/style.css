@@ -1,0 +1,41 @@
+/*
+ * Always set the map height explicitly to define the size of the div element
+ * that contains the map.
+ */
+#map {
+    height: 85%;
+    float: right;
+    width: 75%;
+}
+
+/*
+ * Optional: Makes the sample page fill the window.
+ */
+html,
+body {
+    height: 100%;
+    margin: 3px;
+    padding: 0;
+    background-color: lightblue;
+}
+
+/* Create left detail area */
+#stationDetail {
+    text-align: center;
+    background-color: antiquewhite;
+    float: left;
+    width: 24%;
+    height: 85%;
+}
+
+#headLine {
+    text-align: center;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 50px;
+}
+
+#teamMember{
+    font-weight: bold;
+    text-align: right;
+
+}
