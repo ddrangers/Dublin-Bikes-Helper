@@ -109,6 +109,7 @@ def weather():
     return weather_result
 
 
+
 @app.route('/stations')
 def stations():
     # get db connection
