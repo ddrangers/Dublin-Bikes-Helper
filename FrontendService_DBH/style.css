@@ -2,10 +2,20 @@
  * Always set the map height explicitly to define the size of the div element
  * that contains the map.
  */
-#map {
-    height: 85%;
+#weather {
+    background-color: antiquewhite;
+    height: 7%;
     float: right;
     width: 75%;
+    font-size: larger;
+    text-align: center;
+}
+#map {
+    height: 78%;
+    float: right;
+    width: 75%;
+    border: 2px solid black;
+    box-sizing: border-box;
 }
 
 /*
@@ -21,6 +31,7 @@ body {
 
 /* Create left detail area */
 #stationDetail {
+    font-size: larger;
     text-align: center;
     background-color: antiquewhite;
     float: left;
