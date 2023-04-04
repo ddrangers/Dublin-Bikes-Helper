@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>DBH</title>
+    <!--  link the external css file  -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!--  link the external JavaScript file -->
+    <script src="app.js"></script>
+    <!--  link the external JavaScript file -->
+    <script src="jquery.main.js"></script>
+    <!--  link the external fonts file from Google  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+</head>
+
+
+
+
+<body>
+    <header>
+        <div>
+            <p id="headLine">Welcome to Dublin bike helper</p>
+            <p id="teamMember">Team 16:  Cormac Lynch, Jingao Liu, Yongjie Lyu</p>
+        </div>
+    </header>
+
+    <div id="stationDetail">
+        <h3 style="margin-top: 80px">Station Detail</h3>
+    </div>
+    <div id="map"></div>
+    <!-- 1.important to get the sequence right. The Google Maps api starts your code when the loading is finished and the
+         callback function is executed
+         2.specify the name of a global function to be called once the Maps JavaScript API loads completely.
+         3.The `defer` attribute causes the callback to execute after the full HTML document has been parsed. For non-blocking
+         uses, avoiding race conditions,and consistent behavior across browsers, consider loading using Promises with
+         https://www.npmjs.com/package/@googlemaps/js-api-loader.
+      -->
+    <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQAXnKe8rtF-oCiYBQ88H_a6S6it2AIdI&callback=initMap&v=weekly"
+            defer
+    ></script>
+
+</body>
+</html>
