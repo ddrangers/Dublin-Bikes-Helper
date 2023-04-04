@@ -31,6 +31,7 @@
     <div id="stationDetail">
         <h3 style="margin-top: 80px">Station Detail</h3>
     </div>
+    <div id="weather"><h3 style="margin-top: 20px; margin-left: 20px; float: left; font-size: 20px">Current Weather</h3></div>
     <div id="map"></div>
     <!-- 1.important to get the sequence right. The Google Maps api starts your code when the loading is finished and the
          callback function is executed
@@ -39,10 +40,9 @@
          uses, avoiding race conditions,and consistent behavior across browsers, consider loading using Promises with
          https://www.npmjs.com/package/@googlemaps/js-api-loader.
       -->
-    <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQAXnKe8rtF-oCiYBQ88H_a6S6it2AIdI&callback=initMap&v=weekly"
-            defer
-    ></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQAXnKe8rtF-oCiYBQ88H_a6S6it2AIdI
+    &v=beta&libraries=marker&callback=initMap"></script>
 
 </body>
 </html>
