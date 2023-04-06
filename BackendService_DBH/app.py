@@ -1,4 +1,5 @@
 import json
+import requests
 from flask import Flask
 from sqlalchemy import create_engine, select, MetaData, Table, text
 import pandas as pd
@@ -27,7 +28,7 @@ def index():
     engine = create_engine(connection_string, echo=True)
     # creat database object
     metadata = MetaData()
-    bike_static_test = Table('bike_static_test', metadata, autoload_with=engine)
+    bike_static = Table('bike_static', metadata, autoload_with=engine)
 
     # # the column we need
     # columns = ['indexNumber', 'name', 'address', 'location_lat', 'location_lon']
@@ -37,11 +38,11 @@ def index():
     sql1 = "SELECT a.indexNumber, a.name, a.location_lat, a.location_lon FROM bike_static as a;"
 
     stmt = select(
-        bike_static_test.c.indexNumber,
-        bike_static_test.c.name,
-        bike_static_test.c.address,
-        bike_static_test.c.location_lat,
-        bike_static_test.c.location_lon
+        bike_static.c.indexNumber,
+        bike_static.c.name,
+        bike_static.c.address,
+        bike_static.c.location_lat,
+        bike_static.c.location_lon
     )
 
     with engine.connect() as conn:
@@ -55,10 +56,64 @@ def index():
     return df.to_json(orient="records")
 
 
-@app.route('/contact')
-def contact():
-    # get db connection
-    return "app.send_static_file(‘contact.html')"
+@app.route('/weather')
+def weather():
+    with open("config.json", "r") as jsonfile:
+        configFile = json.load(jsonfile)
+        print("successfully loading Json config file...")
+    print("reading config file:", configFile)
+    token = configFile['weather_token']
+    url1 = f'http://api.openweathermap.org/geo/1.0/direct?q=Dublin&limit=1&appid={token}'
+    response_geo = requests.get(url1)
+
+    # check the response status
+    response_statusCode = response_geo.status_code
+    print(response_statusCode)  # return 200 means OK
+
+    # Get the coordinate and pass the variable
+    response_coordinate = response_geo.text
+    coordinate_Json = json.loads(response_coordinate)
+    print(coordinate_Json[0]['name'])
+    print(coordinate_Json[0]['lon'])
+    print(coordinate_Json[0]['lat'])
+    lon = coordinate_Json[0]['lon']
+    lat = coordinate_Json[0]['lat']
+
+    # invoke the weather API Using existing coordinate
+    url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={token}'  # Current weather data API
+    try:
+        response_rawWeather = requests.get(url)
+    except Exception as e:
+        print(e)
+
+    # check the response status
+    response_statusCode2 = response_rawWeather.status_code
+    print("weather API response code:", response_statusCode2)  # return 200 means OK
+
+    # Get the weather JSON data
+    response_weather = response_rawWeather.text
+    weather_data = json.loads(response_weather)  # Convert from JSON to Python
+
+    # Extract the fields of interest
+    id = weather_data['id']
+    weather_main = weather_data['weather'][0]['main']
+    temp = weather_data['main']['temp']
+    temp_feel = weather_data['main']['feels_like']
+    wind_speed = weather_data['wind']['speed']
+
+    # Create a dictionary to store the extracted data
+    data = {
+        "id": id,
+        "weather_main": weather_main,
+        "temp": temp,
+        "temp_feel": temp_feel,
+        "wind_speed": wind_speed
+    }
+
+    weather_result = json.dumps(data, indent=3)  # # Convert the dictionary to JSON
+    # print(weather_result)
+    return weather_result
+
 
 
 @app.route('/stationsDetail')
