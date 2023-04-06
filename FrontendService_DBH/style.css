@@ -37,6 +37,7 @@ body {
     float: left;
     width: 24%;
     height: 85%;
+    margin: auto;
 }
 
 #headLine {
@@ -49,4 +50,36 @@ body {
     font-weight: bold;
     text-align: right;
 
+}
+
+#barDetail {
+    border: 2px solid black; /* sets border to 1px thickness, solid style, and black color */
+    padding: 10px; /* adds padding to the inside of the box */
+    width: 90%;
+    height: 150px; /* sets the height of the box */
+    margin: auto; /* center the box horizontally */
+}
+
+#aiPlot{
+    margin-top: 50px;
+    padding: 10px; /* adds padding to the inside of the box */
+    width: 90%;
+    height: 150px; /* sets the height of the box */
+    /*margin: auto; !* center the box horizontally *!*/
+}
+
+/* Dropdown Button */
+.dropbtn {
+    margin-top: 20px;
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
 }

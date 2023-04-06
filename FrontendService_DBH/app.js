@@ -1,3 +1,7 @@
+// 定义全局变量parsedObjInfo以便在多个函数中使用
+var parsedObjInfo;
+// 定义当前bike station id
+var current_bike_station_id
 
 // get the current weather info
 function getWeather() {
@@ -22,13 +26,6 @@ function addWeather(weatherJson) {
 }
 
 
-
-
-
-
-
-
-
 // Callback init function
 function initMap() {
     const map = new google.maps.Map(document.getElementById("map"), {
@@ -45,6 +42,8 @@ function initMap() {
     // });
     // invoke
     getStationsList(map);
+    getWeather();
+    // setAiPlot(current_bike_station_id)
 }
 window.initMap = initMap;
 
@@ -87,8 +86,11 @@ function addMarkers(stationsJson, map) {
             marker.addListener("click", ({ domEvent, latLng }) => {
                 const { target } = domEvent;
                 infoWindow.close();
-                var Content = getAvailableInfo(station.indexNumber)
+                var Content = getAvailableInfo(station.indexNumber);
                 infoWindow.setContent(marker.title + "\n" + Content);
+                setBarInfo(Content);
+                current_bike_station_id = station.indexNumber
+                console.log("The current selected marker is:", current_bike_station_id)
                 infoWindow.open(marker.map, marker);
             });
         }
@@ -106,9 +108,45 @@ function getAvailableInfo(indexnumber) {
         }
     })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then((data) => {
+            console.log("fetch getAvailableInfo response:", typeof data);
+            // return the available bike station info from the reponse file
+            parsedObjInfo = data;
+        })
         .catch(error => console.error(error));
 
-    // return the available bike station info from the reponse file
-    return "xxx"
+    return parsedObjInfo;
+}
+
+
+// set the available stations and bikes on the left bar.
+function setBarInfo(content) {
+    document.getElementById("barDetail").innerHTML = content
+}
+
+// set the AI predictions on the left bar.
+function setAiPlot(current_bike_station_id ) {
+    // use the select option as the parameter
+    // var showWeekdays = document.getElementById("weekdays");
+    // var weekdays = showWeekdays.value;
+    // fetch the Json file which contains the coordinates of each station
+    fetch(`http://127.0.0.1:5000/stationsPredict/${current_bike_station_id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then((data) => {
+            console.log("fetch getAvailableInfo response:", typeof data);
+            // return the available bike station info from the reponse file
+        })
+        .catch(error => console.error(error));
+    // Use chart.js to generate the prediction plot
+
+
+
+
+
+
 }
