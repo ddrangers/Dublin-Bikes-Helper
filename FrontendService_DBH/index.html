@@ -15,6 +15,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+
+
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart']});
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart1);
+        google.charts.setOnLoadCallback(drawChart2);
+    </script>
+
+
+
 </head>
 
 
@@ -29,7 +43,7 @@
     </header>
 
     <div id="stationDetail">
-        <h3 style="margin-top: 40px">Station Detail</h3>
+        <h3 style="margin-top: 20px">Station Detail</h3>
         <div id="barDetail">
             Please click on markers to see the detail infomation
         </div>
@@ -51,8 +65,8 @@
 <!--                <button onclick="setAiPlot()" class="dropbtn">Get the AI result</button>-->
 <!--            </div>-->
         </div>
-        <div id="Chart">
-        </div>
+        <div id="ChartBike"></div>
+        <div id="ChartStation"></div>
     </div>
 
     <div id="weather"><h3 style="margin-top: 20px; margin-left: 20px; float: left; font-size: 20px">Current Weather</h3></div>
@@ -64,7 +78,6 @@
          uses, avoiding race conditions,and consistent behavior across browsers, consider loading using Promises with
          https://www.npmjs.com/package/@googlemaps/js-api-loader.
       -->
-
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQAXnKe8rtF-oCiYBQ88H_a6S6it2AIdI
     &v=beta&libraries=marker&callback=initMap"></script>
 

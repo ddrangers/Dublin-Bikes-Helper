@@ -9,9 +9,10 @@ function getWeather() {
     fetch("http://127.0.0.1:5000/weather")
         .then((response) => response.json())  //parsing the response body text as JSON
         .then((data) => {
-            console.log("fetch response:", typeof data)
+            console.log("fetch current weather info response:", typeof data)
             addWeather(data);
-        });
+        })
+        .catch(error => console.error(error));
 }
 function addWeather(weatherJson) {
     var weatherStr = "Current Weather"
@@ -54,7 +55,7 @@ function getStationsList(map) {
     fetch("http://127.0.0.1:5000/stations")
         .then((response) => response.json())  //parsing the response body text as JSON
         .then((data) => {
-            console.log("fetch response:", typeof data)
+            console.log("fetch static station list response:", typeof data)
             addMarkers(data, map);
         });
 }
@@ -89,8 +90,9 @@ function addMarkers(stationsJson, map) {
                 var Content = getAvailableInfo(station.indexNumber);
                 infoWindow.setContent(marker.title + "\n" + Content);
                 setBarInfo(Content);
-                current_bike_station_id = station.indexNumber
-                console.log("The current selected marker is:", current_bike_station_id)
+                setAiPlot(station.indexNumber);
+                current_bike_station_id = station.indexNumber;
+                console.log("The current selected marker is:", current_bike_station_id);
                 infoWindow.open(marker.map, marker);
             });
         }
@@ -125,7 +127,7 @@ function setBarInfo(content) {
 }
 
 // set the AI predictions on the left bar.
-function setAiPlot(current_bike_station_id ) {
+function setAiPlot(current_bike_station_id) {
     // use the select option as the parameter
     // var showWeekdays = document.getElementById("weekdays");
     // var weekdays = showWeekdays.value;
@@ -142,11 +144,105 @@ function setAiPlot(current_bike_station_id ) {
             // return the available bike station info from the reponse file
         })
         .catch(error => console.error(error));
-    // Use chart.js to generate the prediction plot
+    // Use drawChart1 and drawChart2 function to generate the prediction plot
+    
+}
 
 
+function drawChart1() {
+    var data1 = google.visualization.arrayToDataTable([
+        ["Hours", "Availiable bike num", { role: "style" } ],
 
+        ["1", 11.94, "gold"],
+        ["2", 10.49, "gold"],
+        ["3", 19.30, "gold"],
+        ["4", 21.45, "gold"],
+        ["5", 21.85, "gold"],
+        ["6", 21.45, "gold"],
+        ["7", 20.45, "gold"],
+        ["8", 21.85, "gold"],
+        ["9", 21.45, "gold"],
+        ["10", 21.45, "gold"],
+        ["11", 13.45, "gold"],
+        ["12", 13.45, "gold"],
+        ["13", 2.45, "gold"],
+        ["14", 2.45, "gold"],
+        ["15", 2.45, "gold"],
+        ["16", 3.45, "gold"],
+        ["17", 3.45, "gold"],
+        ["18", 4.45, "gold"],
+        ["19", 7.45, "gold"],
+        ["20", 8.45, "gold"],
+        ["21", 12.45, "gold"],
+        ["22", 12.45, "gold"],
+        ["23", 11.45, "gold"],
+        ["24", 11.45, "gold"],
+    ]);
 
+    var view = new google.visualization.DataView(data1);
+    view.setColumns([0, 1,
+        { calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation" },
+        2]);
 
+    var options = {
+        title: "Bike availability (next 24 hours)",
+        width: 293,
+        height: 285,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+    };
+    var chart = new google.visualization.ColumnChart(document.getElementById("ChartBike"));
+    chart.draw(view, options);
+}
 
+function drawChart2() {
+    var data2 = google.visualization.arrayToDataTable([
+        ["Hours", "Availiable bike num", { role: "style" } ],
+
+        ["1", 11.94, "gold"],
+        ["2", 10.49, "gold"],
+        ["3", 19.30, "gold"],
+        ["4", 21.45, "gold"],
+        ["5", 21.85, "gold"],
+        ["6", 21.45, "gold"],
+        ["7", 20.45, "gold"],
+        ["8", 21.85, "gold"],
+        ["9", 21.45, "gold"],
+        ["10", 21.45, "gold"],
+        ["11", 13.45, "gold"],
+        ["12", 13.45, "gold"],
+        ["13", 2.45, "gold"],
+        ["14", 2.45, "gold"],
+        ["15", 2.45, "gold"],
+        ["16", 3.45, "gold"],
+        ["17", 3.45, "gold"],
+        ["18", 4.45, "gold"],
+        ["19", 7.45, "gold"],
+        ["20", 8.45, "gold"],
+        ["21", 12.45, "gold"],
+        ["22", 12.45, "gold"],
+        ["23", 11.45, "gold"],
+        ["24", 11.45, "gold"],
+    ]);
+
+    var view = new google.visualization.DataView(data2);
+    view.setColumns([0, 1,
+        { calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation" },
+        2]);
+
+    var options = {
+        title: "Station availability (next 24 hours)",
+        width: 293,
+        height: 285,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+    };
+    var chart = new google.visualization.ColumnChart(document.getElementById("ChartStation"));
+    chart.draw(view, options);
 }

@@ -23,7 +23,7 @@
  */
 html,
 body {
-    height: 100%;
+    height: 120%;
     margin: 3px;
     padding: 0;
     background-color: lightblue;
@@ -60,11 +60,15 @@ body {
     margin: auto; /* center the box horizontally */
 }
 
+#chartBike {
+    margin: auto; /* center the box horizontally */
+}
+
 #aiPlot{
     margin-top: 50px;
     padding: 10px; /* adds padding to the inside of the box */
     width: 90%;
-    height: 150px; /* sets the height of the box */
+    height: 50px; /* sets the height of the box */
     /*margin: auto; !* center the box horizontally *!*/
 }
 
