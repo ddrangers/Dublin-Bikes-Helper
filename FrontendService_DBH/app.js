@@ -10,18 +10,18 @@ function getWeather() {
         .then((response) => response.json())  //parsing the response body text as JSON
         .then((data) => {
             console.log("fetch current weather info response:", typeof data)
+            console.log(data)
             addWeather(data);
-        })
-        .catch(error => console.error(error));
+        });
 }
+
 function addWeather(weatherJson) {
-    var weatherStr = "Current Weather"
-    parsedObjWeather = JSON.parse(weatherJson);
-    var weather_main = parsedObjWeather.weather_main
-    var temp = parsedObjWeather.temp
-    var temp_feel = parsedObjWeather.temp_feel
-    var wind_speed = parsedObjWeather.wind_speed
-    weatherData = "weather: " + weather_main + "tempurature°: " + temp + "°" + "     RealFeel°:" + temp_feel+ "     wind speed:" + wind_speed
+    var weatherStr = "<br>Current Weather<br>"
+    var weather_main = weatherJson.weather_main
+    var temp = weatherJson.temp
+    var temp_feel = weatherJson.temp_feel
+    var wind_speed = weatherJson.wind_speed
+    weatherData = "weather: " + weather_main + " &nbsp;&nbsp;&nbsp;&nbsp;tempurature°: " + temp + "°" + "&nbsp;&nbsp;&nbsp;&nbsp;RealFeel°:" + temp_feel+ "&nbsp;&nbsp;&nbsp;&nbsp;wind speed:" + wind_speed
     weatherStr = weatherStr + weatherData
     document.getElementById("weather").innerHTML = weatherStr;
 }
@@ -44,7 +44,6 @@ function initMap() {
     // invoke
     getStationsList(map);
     getWeather();
-    // setAiPlot(current_bike_station_id)
 }
 window.initMap = initMap;
 
@@ -56,6 +55,7 @@ function getStationsList(map) {
         .then((response) => response.json())  //parsing the response body text as JSON
         .then((data) => {
             console.log("fetch static station list response:", typeof data)
+            console.log(data)
             addMarkers(data, map);
         });
 }
@@ -81,16 +81,15 @@ function addMarkers(stationsJson, map) {
                 map,
                 title: station.name,
                 content: pinView.element,
-                // station_number: station.indexNumber,
             });
             // Add a click listener for each marker, and set up the info window.
             marker.addListener("click", ({ domEvent, latLng }) => {
                 const { target } = domEvent;
                 infoWindow.close();
-                var Content = getAvailableInfo(station.indexNumber);
-                infoWindow.setContent(marker.title + "\n" + Content);
+                var Content = getAvailableInfo(station.indexNumber);  //Content is a parsed JSON obj
+                infoWindow.setContent(marker.title + "<br>" + "Address:" + Content.address);
                 setBarInfo(Content);
-                setAiPlot(station.indexNumber);
+                // setAiPlot(station.indexNumber);
                 current_bike_station_id = station.indexNumber;
                 console.log("The current selected marker is:", current_bike_station_id);
                 infoWindow.open(marker.map, marker);
@@ -103,7 +102,7 @@ function addMarkers(stationsJson, map) {
 // get the available stations and bikes. (Input station index number)
 function getAvailableInfo(indexnumber) {
     // fetch the Json file which contains the coordinates of each station
-    fetch(`http://127.0.0.1:5000/availableInfo/${indexnumber}`, {
+    fetch(`http://127.0.0.1:5000/stations/${indexnumber}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -111,7 +110,7 @@ function getAvailableInfo(indexnumber) {
     })
         .then(response => response.json())
         .then((data) => {
-            console.log("fetch getAvailableInfo response:", typeof data);
+            console.log("Fetch get station detail availableInfo response:", typeof data, data);
             // return the available bike station info from the reponse file
             parsedObjInfo = data;
         })
@@ -123,7 +122,16 @@ function getAvailableInfo(indexnumber) {
 
 // set the available stations and bikes on the left bar.
 function setBarInfo(content) {
-    document.getElementById("barDetail").innerHTML = content
+    console.log("invoke setBarInfo");
+    var displayString = "Bike station No.&nbsp;"+ content.index;
+    displayString = displayString +  "<br>Station name:&nbsp;"+ content.name;
+    displayString = displayString +  "<br>Station status:&nbsp;"+ content.status;
+    displayString = displayString +  "<br>Address:&nbsp;"+ content.address;
+    displayString = displayString +  "<br>Current bike available:&nbsp;"+ content.bike_available;
+    displayString = displayString +  "<br>Current stand available:&nbsp;"+ content.bike_stand;
+    displayString = displayString +  "<br>Total bike stand:&nbsp;"+ content.bike_stand_available;
+    document.getElementById("barDetail").innerHTML = displayString;
+    console.log("displayString:" ,displayString);
 }
 
 // set the AI predictions on the left bar.
@@ -189,7 +197,7 @@ function drawChart1() {
 
     var options = {
         title: "Bike availability (next 24 hours)",
-        width: 293,
+        width: 383,
         height: 285,
         bar: {groupWidth: "95%"},
         legend: { position: "none" },
@@ -238,7 +246,7 @@ function drawChart2() {
 
     var options = {
         title: "Station availability (next 24 hours)",
-        width: 293,
+        width: 383,
         height: 285,
         bar: {groupWidth: "95%"},
         legend: { position: "none" },
