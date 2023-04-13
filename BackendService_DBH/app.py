@@ -105,8 +105,8 @@ def weather():
     data = {
         "id": id,
         "weather_main": weather_main,
-        "temp": temp,
-        "temp_feel": temp_feel,
+        "temp": round((temp - 273.15), 1),  # convert temperature to celsius and keep one decimal place
+        "temp_feel": round((temp_feel - 273.15)),
         "wind_speed": wind_speed
     }
 
@@ -115,12 +115,44 @@ def weather():
     return weather_result
 
 
-
-@app.route('/stationsDetail')
-def stations():
+@app.route('/stationsPredict/<int:current_bike_station_id>')
+def stationsPredict(current_bike_station_id):
     # get db connection
     return "list of stations"
+    bike_response = requests.get(
+        'https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=004cf9dced9bc8d383db556938be65d9449aeae2')
+    if bike_response.status_code == 200:
+        print('work')
+        bike_json = json.loads(dub_bike_response.text)
+        for station in bike_json:
+            if station['number'] == indexnumber:
+                # Extract the required fields for the station
+                index = station['number']
+                name = station['name']
+                address = station['address']
+                bike_stand = station['bike_stands']
+                bike_stand_available = station['available_bike_stands']
+                bike_available = station['available_bikes']
+                status = station['status']
 
+                # Create a dictionary to store the extracted data
+                data = {
+                    "index": index,
+                    "name": name,
+                    "address": address,
+                    "bike_stand": bike_stand,
+                    "bike_stand_available": bike_stand_available,
+                    "bike_available": bike_available,
+                    "status": status
+                }
+
+                # Convert the dictionary to JSON and return the result #in fuction add return
+                station_result = json.dumps(data, indent=3)  # # Convert the dictionary to JSON
+                return station_result
+            # Return an error message if the station ID is not found
+        data = "error: Station not found"
+        station_result = json.dumps(data, indent=3)
+        return station_result
 
 @app.route('/stations/<int:indexnumber>')
 def station(indexnumber):

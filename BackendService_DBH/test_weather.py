@@ -51,10 +51,10 @@ wind_speed = weather_data['wind']['speed']
 data = {
     "id": id,
     "weather_main": weather_main,
-    "temp": temp,
-    "temp_feel": temp_feel,
+    "temp": round((temp - 273.15), 1),  # convert temperature to celsius and keep one decimal place
+    "temp_feel": round((temp_feel - 273.15)),
     "wind_speed": wind_speed
 }
 
 weather_result = json.dumps(data, indent=3)  # # Convert the dictionary to JSON
-# print(weather_result)
+print(weather_result)
