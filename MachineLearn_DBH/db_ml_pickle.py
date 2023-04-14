@@ -100,13 +100,13 @@ for i in range(1,120):
         #Value we are trying to predict (y) - Bike Availability or Bike Parking - at Station = stationid
         #For each station
         
-        #train_set['station_select'] = (train_set['YEAR_y']==2023) & (train_set['MONTH_y']==3) & (train_set['DAY_y']==day_num) & (train_set['number']==stationid)
-        train_set['station_select'] = (train_set['YEAR_y']==2023) & (train_set['MONTH_y']==3) & (train_set['number']==stationid)
+        train_set['station_select'] = (train_set['number']==stationid)
+        #train_set['station_select'] = (train_set['YEAR_y']==2023) & (train_set['MONTH_y']==3) & (train_set['number']==stationid)
 
         y = train_set[predict].loc[train_set['station_select']]
 
         #Weather parameters (X) we are using for prediction of Bike Availability
-        features = ['weather_main','clouds','tempcel', 'weather_id', 'wind_speed','tempcel_feel']
+        features = ['weather_main','clouds','tempcel', 'weather_id', 'wind_speed','tempcel_feel','MONTH_x','DAY_x','HOUR_x']
 
         #Use Random Forest as prediction model
         X = train_set[features].loc[train_set['station_select']]
@@ -115,8 +115,8 @@ for i in range(1,120):
         randomforest_predictions = randomforest.predict(X).round(0)
 
         #Test the model on the Test Set
-        #test_set['station_select'] = (test_set['YEAR_y']==2023) & (test_set['MONTH_y']==3) & (train_set['DAY_y']==day_num) & (test_set['number']==stationid)
-        test_set['station_select'] = (test_set['YEAR_y']==2023) & (test_set['MONTH_y']==3) & (test_set['number']==stationid)
+        test_set['station_select'] = (test_set['number']==stationid)
+        #test_set['station_select'] = (test_set['YEAR_y']==2023) & (test_set['MONTH_y']==3) & (test_set['number']==stationid)
         y_test = test_set[predict].loc[test_set['station_select']]
         X_test = test_set[features].loc[test_set['station_select']]
         randomforest_predictions_test = randomforest.predict(X_test).round(0)
@@ -133,8 +133,8 @@ for i in range(1,120):
         # Serialize model object (in this case Random Forest) into a file and send to disk using pickle
         filename = f'{file_path_pickle}\\randomforest{stationid}_{fileappend}.pkl'
         print(filename)
-        #with open(filename, 'wb') as handle:
-            #pickle.dump(randomforest, handle, pickle.HIGHEST_PROTOCOL)
+        with open(filename, 'wb') as handle:
+            pickle.dump(randomforest, handle, pickle.HIGHEST_PROTOCOL)
     except:
         print(f'No Station with ID number {i} exists')
 #Print out the results
