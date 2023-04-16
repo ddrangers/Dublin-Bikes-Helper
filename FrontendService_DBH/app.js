@@ -1,7 +1,12 @@
 // 定义全局变量parsedObjInfo以便在多个函数中使用
 var parsedObjInfo;
 // 定义当前bike station id
-var current_bike_station_id
+var current_bike_station_id;
+// 定义找回来的station data
+var stationData;
+// 定义全局map方便多个函数进行饮用
+let markers = [];
+
 
 // get the current weather info
 function getWeather() {
@@ -33,15 +38,9 @@ function initMap() {
         // The maps default view (Dublin)
         center: { lat: 53.3515, lng: -6.27527},
         zoom: 14,
-        mapId: "DBH_maps"
+        mapId: "DBH_maps",
     });
-    //test marker
-    // new google.maps.marker.AdvancedMarkerView({
-    //     map,
-    //     position: { lat: 53.3515, lng: -6.25527 },
-    //     title: "Test Marker",
-    // });
-    // invoke
+    // invoke the default function
     getStationsList(map);
     getWeather();
 }
@@ -56,6 +55,7 @@ function getStationsList(map) {
         .then((data) => {
             console.log("fetch static station list response:", typeof data)
             console.log(data)
+            stationData = data;
             addMarkers(data, map);
         });
 }
@@ -71,6 +71,9 @@ function addMarkers(stationsJson, map) {
             i = i+1;
             const pinView = new google.maps.marker.PinView({
                 glyph: `${i + 1}`,
+                background: "#FFBF00",
+                // 00FFFF green
+                // FFBF00 yellow
             });
             // Add a new marker
             const marker = new google.maps.marker.AdvancedMarkerView({
@@ -82,6 +85,8 @@ function addMarkers(stationsJson, map) {
                 title: station.name,
                 content: pinView.element,
             });
+            markers.push(marker);
+
             // Add a click listener for each marker, and set up the info window.
             marker.addListener("click", ({ domEvent, latLng }) => {
                 const { target } = domEvent;
@@ -96,6 +101,14 @@ function addMarkers(stationsJson, map) {
             });
         }
     });
+    //test marker
+    // const marker = new google.maps.marker.AdvancedMarkerView({
+    //     map,
+    //     position: { lat: 53.3515, lng: -6.25527 },
+    //     title: "Test Marker",
+    // });
+    // markers.push(marker);
+
 }
 
 
@@ -128,8 +141,8 @@ function setBarInfo(content) {
     displayString = displayString +  "<br>Station status:&nbsp;"+ content.status;
     displayString = displayString +  "<br>Address:&nbsp;"+ content.address;
     displayString = displayString +  "<br>Current bike available:&nbsp;"+ content.bike_available;
-    displayString = displayString +  "<br>Current stand available:&nbsp;"+ content.bike_stand;
-    displayString = displayString +  "<br>Total bike stand:&nbsp;"+ content.bike_stand_available;
+    displayString = displayString +  "<br>Current stand available:&nbsp;"+ content.bike_stand_available;
+    displayString = displayString +  "<br>Total bike stand:&nbsp;"+ content.bike_stand;
     document.getElementById("barDetail").innerHTML = displayString;
     console.log("displayString:" ,displayString);
 }
@@ -201,6 +214,7 @@ function drawChart1() {
         height: 285,
         bar: {groupWidth: "95%"},
         legend: { position: "none" },
+        colors: ['#7FFFD4']
     };
     var chart = new google.visualization.ColumnChart(document.getElementById("ChartBike"));
     chart.draw(view, options);
@@ -254,3 +268,4 @@ function drawChart2() {
     var chart = new google.visualization.ColumnChart(document.getElementById("ChartStation"));
     chart.draw(view, options);
 }
+
