@@ -6,11 +6,11 @@ import pandas as pd
 import pickle
 import os
 import datetime
-# from flask_cors import CORS
+from flask_cors import CORS
 
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 
 @app.route('/stations')
 def index():
