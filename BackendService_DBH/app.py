@@ -3,6 +3,8 @@ import requests
 from flask import Flask, jsonify
 from sqlalchemy import create_engine, select, MetaData, Table, text
 import pandas as pd
+from flask_cors import CORS
+
 import pickle
 import os
 import datetime

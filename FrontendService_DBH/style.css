@@ -2,10 +2,20 @@
  * Always set the map height explicitly to define the size of the div element
  * that contains the map.
  */
-#map {
-    height: 85%;
+#weather {
+    background-color: antiquewhite;
+    height: 6%;
     float: right;
     width: 75%;
+    font-size: larger;
+    text-align: center;
+}
+#map {
+    height: 78%;
+    float: right;
+    width: 75%;
+    border: 2px solid black;
+    box-sizing: border-box;
 }
 
 /*
@@ -13,7 +23,7 @@
  */
 html,
 body {
-    height: 100%;
+    height: 105%;
     margin: 3px;
     padding: 0;
     background-color: lightblue;
@@ -21,14 +31,18 @@ body {
 
 /* Create left detail area */
 #stationDetail {
+    font-size: larger;
     text-align: center;
     background-color: antiquewhite;
     float: left;
     width: 24%;
     height: 85%;
+    margin: auto;
 }
 
 #headLine {
+    margin-top: 20px;
+    margin-bottom: 20px;
     text-align: center;
     font-family: 'Ma Shan Zheng', cursive;
     font-size: 50px;
@@ -38,4 +52,44 @@ body {
     font-weight: bold;
     text-align: right;
 
+}
+
+#barDetail {
+    border: 2px solid black; /* sets border to 1px thickness, solid style, and black color */
+    padding: 10px; /* adds padding to the inside of the box */
+    width: 90%;
+    height: 200px; /* sets the height of the box */
+    margin: auto; /* center the box horizontally */
+}
+
+
+#ChartBike,#ChartStation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#aiPlot{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+    height: 25px; /* sets the height of the box */
+    /*margin: auto; !* center the box horizontally *!*/
+}
+
+/* Dropdown Button */
+.dropbtn {
+    margin-top: 20px;
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
 }
