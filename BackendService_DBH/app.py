@@ -8,7 +8,6 @@ import os
 import datetime
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 CORS(app)
 
@@ -33,11 +32,6 @@ def index():
     metadata = MetaData()
     bike_static = Table('bike_static', metadata, autoload_with=engine)
 
-    # # the column we need
-    # columns = ['indexNumber', 'name', 'address', 'location_lat', 'location_lon']
-    #
-    # # query the data for specified columns
-    # stmt = select([getattr(bike_static_test.c, column) for column in columns])
     sql1 = "SELECT a.indexNumber, a.name, a.location_lat, a.location_lon FROM bike_static as a;"
 
     stmt = select(
