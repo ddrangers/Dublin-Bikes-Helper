@@ -1,7 +1,7 @@
 import requests
 import json
 import uuid
-import  models
+import models
 import schedule
 import time
 

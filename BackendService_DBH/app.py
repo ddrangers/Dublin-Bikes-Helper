@@ -3,8 +3,11 @@ import requests
 from flask import Flask, jsonify
 from sqlalchemy import create_engine, select, MetaData, Table, text
 import pandas as pd
-from flask_cors import CORS
 
+import pickle
+import os
+import datetime
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
@@ -30,11 +33,6 @@ def index():
     metadata = MetaData()
     bike_static = Table('bike_static', metadata, autoload_with=engine)
 
-    # # the column we need
-    # columns = ['indexNumber', 'name', 'address', 'location_lat', 'location_lon']
-    #
-    # # query the data for specified columns
-    # stmt = select([getattr(bike_static_test.c, column) for column in columns])
     sql1 = "SELECT a.indexNumber, a.name, a.location_lat, a.location_lon FROM bike_static as a;"
 
     stmt = select(
@@ -117,42 +115,131 @@ def weather():
 
 @app.route('/stationsPredict/<int:current_bike_station_id>')
 def stationsPredict(current_bike_station_id):
-    # get db connection
-    return "list of stations"
-    bike_response = requests.get(
-        'https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=004cf9dced9bc8d383db556938be65d9449aeae2')
-    if bike_response.status_code == 200:
-        print('work')
-        bike_json = json.loads(dub_bike_response.text)
-        for station in bike_json:
-            if station['number'] == indexnumber:
-                # Extract the required fields for the station
-                index = station['number']
-                name = station['name']
-                address = station['address']
-                bike_stand = station['bike_stands']
-                bike_stand_available = station['available_bike_stands']
-                bike_available = station['available_bikes']
-                status = station['status']
+    pickle_dir = "/Users/lvyongjie/Downloads/Pickle Files"
+    pickle_files = os.listdir(pickle_dir)
+    with open("config.json", "r") as jsonfile:
+        configFile = json.load(jsonfile)
+    token = configFile['weather_token']
+    url1 = f'http://api.openweathermap.org/geo/1.0/direct?q=Dublin&limit=1&appid={token}'
+    response_geo = requests.get(url1)
+    # Get the coordinate and pass the variable
+    response_coordinate = response_geo.text
+    coordinate_Json = json.loads(response_coordinate)
+    lon = coordinate_Json[0]['lon']
+    lat = coordinate_Json[0]['lat']
+    # invoke the weather API Using existing coordinate
+    url = f'https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={token}'  # Forecast weather data API
+    try:
+        response_rawWeather = requests.get(url)
+    except Exception as e:
+        print(e)
+    # Get the weather JSON data
+    response_weather = response_rawWeather.text
+    weather_data = json.loads(response_weather)  # Convert from JSON to Python
 
-                # Create a dictionary to store the extracted data
-                data = {
-                    "index": index,
-                    "name": name,
-                    "address": address,
-                    "bike_stand": bike_stand,
-                    "bike_stand_available": bike_stand_available,
-                    "bike_available": bike_available,
-                    "status": status
-                }
+    def process_weather_data(weather_data):
+        weather_map = {
+            "Clouds": 2,
+            "Rain": 4,
+            "Snow": 5,
+            "Clear": 1,
+            "Drizzle": 3,
+            "Mist": 6,
+            "Fog": 7
+        }
 
-                # Convert the dictionary to JSON and return the result #in fuction add return
-                station_result = json.dumps(data, indent=3)  # # Convert the dictionary to JSON
-                return station_result
-            # Return an error message if the station ID is not found
-        data = "error: Station not found"
-        station_result = json.dumps(data, indent=3)
-        return station_result
+        weather_list = []
+        for data in weather_data['list'][:8]:
+            dt = datetime.datetime.fromtimestamp(data['dt'])
+            web_month = dt.month
+            web_day_of_week = dt.weekday()
+            web_hour = dt.hour
+
+            for _ in range(3):
+                web_weather_main = weather_map.get(data['weather'][0]['main'], 0)
+                web_clouds = data['clouds']['all']
+                web_tempcel = data['main']['temp'] - 273.15
+                web_weather_id = data['weather'][0]['id']
+                web_wind_speed = data['wind']['speed']
+                web_tempcel_feel = data['main']['feels_like'] - 273.15
+
+                X_web = [web_weather_main, web_clouds, web_tempcel, web_weather_id, web_wind_speed, web_tempcel_feel,
+                         web_month,
+                         web_day_of_week, web_hour]
+
+                weather_list.append(X_web)
+
+                web_hour += 1  # Increment the hour
+                if web_hour >= 24:
+                    web_hour = 0
+                    web_day_of_week += 1
+                    if web_day_of_week >= 7:
+                        web_day_of_week = 0
+
+        return weather_list[:24]
+
+    weather_list = process_weather_data(weather_data)
+    # print(weather_list)
+    # length_of_weather_list = len(weather_list)
+    # print("Length of weather_list:", length_of_weather_list)
+
+    def get_station_number(file_name):
+        return int(file_name.split("_")[0].replace("randomforest", ""))
+
+    def get_model_type(file_name):
+        if file_name.endswith("_bike.pkl"):
+            return "bike"
+        elif file_name.endswith("_park.pkl"):
+            return "park"
+        else:
+            return None
+
+    def load_model(model_type, station_number):
+        for file_name in pickle_files:
+            if station_number == get_station_number(file_name) and model_type == get_model_type(file_name):
+                file_path = os.path.join(pickle_dir, file_name)
+                with open(file_path, "rb") as f:
+                    model = pickle.load(f)
+                return model
+        return None
+
+    model_park = load_model('park', current_bike_station_id)
+    model_bike = load_model('bike', current_bike_station_id)
+    predictions_park = []
+    predictions_bike = []
+    if model_park is not None and model_bike is not None:
+        for X_web in weather_list:
+            y_web_park = model_park.predict([X_web])
+            predictions_park.append(int(y_web_park.round(0)))
+
+            y_web_bike = model_bike.predict([X_web])
+            predictions_bike.append(int(y_web_bike.round(0)))
+
+    elif model_park is None and model_bike is not None:
+        predictions_park = 'Cannot find the park available model file for station number '+str(current_bike_station_id)
+        for X_web in weather_list:
+            y_web_bike = model_bike.predict([X_web])
+            predictions_bike.append(int(y_web_bike.round(0)))
+    elif model_bike is None and model_park is not None:
+        for X_web in weather_list:
+            y_web_park = model_park.predict([X_web])
+            predictions_park.append(int(y_web_park.round(0)))
+        predictions_bike = "Cannot find the bike available model file for station number "+str(current_bike_station_id)
+    else:
+        predictions_park = 'Cannot find the park available model file for station number '+str(current_bike_station_id)
+        predictions_bike = "Cannot find the bike available model file for station number "+str(current_bike_station_id)
+    # Create a dictionary with both predictions
+    predictions_dict = {
+        'park_predictions': predictions_park,
+        'bike_predictions': predictions_bike
+    }
+    # Convert the dictionary to JSON format
+    predictions_json = json.dumps(predictions_dict)
+    return predictions_json
+
+
+
+
 
 @app.route('/stations/<int:indexnumber>')
 def station(indexnumber):
