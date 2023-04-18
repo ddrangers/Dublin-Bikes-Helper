@@ -3,7 +3,6 @@ import requests
 from flask import Flask, jsonify
 from sqlalchemy import create_engine, select, MetaData, Table, text
 import pandas as pd
-from flask_cors import CORS
 
 import pickle
 import os
@@ -180,9 +179,9 @@ def stationsPredict(current_bike_station_id):
         return weather_list[:24]
 
     weather_list = process_weather_data(weather_data)
-    print(weather_list)
-    length_of_weather_list = len(weather_list)
-    print("Length of weather_list:", length_of_weather_list)
+    # print(weather_list)
+    # length_of_weather_list = len(weather_list)
+    # print("Length of weather_list:", length_of_weather_list)
 
     def get_station_number(file_name):
         return int(file_name.split("_")[0].replace("randomforest", ""))
@@ -206,10 +205,9 @@ def stationsPredict(current_bike_station_id):
 
     model_park = load_model('park', current_bike_station_id)
     model_bike = load_model('bike', current_bike_station_id)
+    predictions_park = []
+    predictions_bike = []
     if model_park is not None and model_bike is not None:
-        predictions_park = []
-        predictions_bike = []
-
         for X_web in weather_list:
             y_web_park = model_park.predict([X_web])
             predictions_park.append(int(y_web_park.round(0)))
@@ -217,19 +215,27 @@ def stationsPredict(current_bike_station_id):
             y_web_bike = model_bike.predict([X_web])
             predictions_bike.append(int(y_web_bike.round(0)))
 
-        if model_park is None:
-            predictions_park = 'Cannot find the park available model file for station number {current_bike_station_id}'
-        if model_bike is None:
-            predictions_bike = "Cannot find the bike available model file for station number {current_bike_station_id}"
-
-        # Create a dictionary with both predictions
-        predictions_dict = {
-            'park_predictions': predictions_park,
-            'bike_predictions': predictions_bike
-        }
-        # Convert the dictionary to JSON format
-        predictions_json = json.dumps(predictions_dict)
-        return predictions_json
+    elif model_park is None and model_bike is not None:
+        predictions_park = 'Cannot find the park available model file for station number '+str(current_bike_station_id)
+        for X_web in weather_list:
+            y_web_bike = model_bike.predict([X_web])
+            predictions_bike.append(int(y_web_bike.round(0)))
+    elif model_bike is None and model_park is not None:
+        for X_web in weather_list:
+            y_web_park = model_park.predict([X_web])
+            predictions_park.append(int(y_web_park.round(0)))
+        predictions_bike = "Cannot find the bike available model file for station number "+str(current_bike_station_id)
+    else:
+        predictions_park = 'Cannot find the park available model file for station number '+str(current_bike_station_id)
+        predictions_bike = "Cannot find the bike available model file for station number "+str(current_bike_station_id)
+    # Create a dictionary with both predictions
+    predictions_dict = {
+        'park_predictions': predictions_park,
+        'bike_predictions': predictions_bike
+    }
+    # Convert the dictionary to JSON format
+    predictions_json = json.dumps(predictions_dict)
+    return predictions_json
 
 
 
