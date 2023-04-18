@@ -11,7 +11,7 @@
     text-align: center;
 }
 #map {
-    height: 77%;
+    height: 78%;
     float: right;
     width: 75%;
     border: 2px solid black;
@@ -60,7 +60,7 @@ body {
     padding: 5px; /* adds padding to the inside of the box */
     text-align: left;
     width: 90%;
-    height: 150px; /* sets the height of the box */
+    height: auto; /* sets the height of the box */
     margin: auto; /* center the box horizontally */
     font-family: 'Geneva';
     font-size: 15px;
@@ -76,9 +76,9 @@ body {
 
 #aiPlot{
     border: 2px solid black; /* sets border to 1px thickness, solid style, and black color */
-    padding: 10px; /* adds padding to the inside of the box */
+    padding: 5px; /* adds padding to the inside of the box */
     width: 90%;
-    height: 375px; /* sets the height of the box */
+    height: auto; /* sets the height of the box */
     margin: auto; /* center the box horizontally */
     text-align: center;
     font-family: 'Geneva';
