@@ -92,6 +92,7 @@ function addMarkers(stationsJson, map) {
                 const { target } = domEvent;
                 infoWindow.close();
                 var Content = getAvailableInfo(station.indexNumber);  //Content is a parsed JSON obj
+                setAiPlot(station.indexNumber); // set the AIplot
                 infoWindow.setContent(marker.title + "<br>" + "Address:" + Content.address);
                 setBarInfo(Content);
                 // setAiPlot(station.indexNumber);
@@ -161,8 +162,10 @@ function setAiPlot(current_bike_station_id) {
     })
         .then(response => response.json())
         .then((data) => {
-            console.log("fetch getAvailableInfo response:", typeof data);
-            // return the available bike station info from the reponse file
+            console.log("Fetch get AI plot data response:", typeof data, data);
+            // return the available plot info
+            drawChart1(data);
+            drawChart2(data);
         })
         .catch(error => console.error(error));
     // Use drawChart1 and drawChart2 function to generate the prediction plot
@@ -170,7 +173,7 @@ function setAiPlot(current_bike_station_id) {
 }
 
 
-function drawChart1() {
+function drawChart1(data) {
     var data1 = google.visualization.arrayToDataTable([
         ["Hours", "Availiable bike num", { role: "style" } ],
 
@@ -220,7 +223,7 @@ function drawChart1() {
     chart.draw(view, options);
 }
 
-function drawChart2() {
+function drawChart2(data) {
     var data2 = google.visualization.arrayToDataTable([
         ["Hours", "Availiable bike num", { role: "style" } ],
 
