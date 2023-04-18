@@ -3,7 +3,7 @@
  * that contains the map.
  */
 #weather {
-    background-color: antiquewhite;
+    background-color: aliceblue;
     height: 6%;
     float: right;
     width: 75%;
@@ -31,11 +31,12 @@ body {
 
 /* Create left detail area */
 #stationDetail {
-    font-size: larger;
+    font-size: medium;
     text-align: center;
-    background-color: antiquewhite;
+    background-color: aliceblue;
     float: left;
     width: 24%;
+    font-family: 'Geneva';
     height: 85%;
     margin: auto;
 }
@@ -44,24 +45,28 @@ body {
     margin-top: 20px;
     margin-bottom: 20px;
     text-align: center;
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 50px;
+    font-family: 'Geneva'; /*'Ma Shan Zheng', cursive;*/
+    font-size: 60px;
 }
 
 #teamMember{
     font-weight: bold;
     text-align: right;
-
+    font-family: 'Geneva';
 }
 
 #barDetail {
     border: 2px solid black; /* sets border to 1px thickness, solid style, and black color */
-    padding: 10px; /* adds padding to the inside of the box */
+    padding: 5px; /* adds padding to the inside of the box */
+    text-align: left;
     width: 90%;
-    height: 200px; /* sets the height of the box */
+    height: 150px; /* sets the height of the box */
     margin: auto; /* center the box horizontally */
+    font-family: 'Geneva';
+    font-size: 15px;
+    font-weight: bold;
+    /* margin-top: 5px; */
 }
-
 
 #ChartBike,#ChartStation {
     display: flex;
@@ -70,11 +75,13 @@ body {
 }
 
 #aiPlot{
-    margin-top: 10px;
-    margin-bottom: 10px;
+    border: 2px solid black; /* sets border to 1px thickness, solid style, and black color */
+    padding: 10px; /* adds padding to the inside of the box */
+    width: 90%;
+    height: 375px; /* sets the height of the box */
+    margin: auto; /* center the box horizontally */
     text-align: center;
-    width: 100%;
-    height: 25px; /* sets the height of the box */
+    font-family: 'Geneva';
     /*margin: auto; !* center the box horizontally *!*/
 }
 

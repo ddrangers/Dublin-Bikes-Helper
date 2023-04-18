@@ -26,29 +26,32 @@
         google.charts.setOnLoadCallback(drawChart1);
         google.charts.setOnLoadCallback(drawChart2);
     </script>
-
-
-
 </head>
-
-
-
 
 <body>
     <header>
         <div>
-            <p id="headLine">Welcome to Dublin bike helper</p>
-            <p id="teamMember">Team 16:  Cormac Lynch, Jingao Liu, Yongjie Lyu</p>
+            <p id="headLine">Welcome to Dublin Bike Helper</p>
+            <p id="teamMember">Created by Team 16:  Jingao Liu | Cormac Lynch | Yongjie Lyu</p>
         </div>
     </header>
 
     <div id="stationDetail">
-        <h3 style="margin-top: 20px">Station Detail</h3>
+        <h3 style="margin: 5px;">Bike Station Details</h3>
+        <h4 style="margin: 5px;">(click on map markers)</h4>
         <div id="barDetail">
-            Please click on markers to see the detail infomation
+            <p style="margin: 3px;">Station ID:</p>
+            <p style="margin: 3px;">Station Name:</p>
+            <p style="margin: 3px;">Address:</p>
+            <p style="margin: 3px;">Status (Open/Closed):</p>
+            <p style="margin: 3px;">Total Bike Stands:</p>
+            <p style="margin: 3px;">Current Bike Availability:</p>
+            <p style="margin: 3px;">Current Parking Availability:</p>
         </div>
+        <h3>Predicted Bike and Parking Availability</h3>
         <div id="aiPlot">
-            Please click on markers to see the AI prediction
+            <p>Click on map markers to get Predicted Bike and Parking Availability</p>
+            <!-- Click on markers to see predicted Bike Availability -->
 <!--            <div class="dropdown" >-->
 <!--                &lt;!&ndash;party filter&ndash;&gt;-->
 <!--                <label for="weekdays">Choose a day:</label>-->
@@ -69,7 +72,7 @@
         <div id="ChartStation"></div>
     </div>
 
-    <div id="weather"><h3 style="margin-top: 40px; margin-left: 20px; float: left; font-size: 20px">Current Weather</h3></div>
+    <div id="weather"><h3 style="margin-top: 10px; margin-left: 20px; float: left; font-size: 20px;">Current Weather:</h3></div>
     <div id="map"></div>
     <!-- 1.important to get the sequence right. The Google Maps api starts your code when the loading is finished and the
          callback function is executed
