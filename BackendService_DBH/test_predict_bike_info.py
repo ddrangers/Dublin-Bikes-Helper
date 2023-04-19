@@ -76,7 +76,15 @@ print("Length of weather_list:", length_of_weather_list)
 
 
 def get_station_number(file_name):
-    return int(file_name.split("_")[0].replace("randomforest", ""))
+    print(f"输入文件名: {file_name}")
+    parts = file_name.split("_")
+    print(f"部分: {parts}")
+    station_number = parts[0].replace("randomforest", "")
+    print(f"站点编号字符串: {station_number}")
+    station_number_int = int(station_number)
+    print(f"站点编号整数: {station_number_int}")
+    return station_number_int
+    # return int(file_name.split("_")[0].replace("randomforest", ""))
 
 
 def get_model_type(file_name):
