@@ -3,6 +3,7 @@
  * that contains the map.
  */
 #weather {
+    font-family: 'Geneva';
     background-color: aliceblue;
     height: 7%;
     float: right;
@@ -17,6 +18,8 @@
     border: 2px solid black;
     box-sizing: border-box;
 }
+
+
 
 /*
  * Optional: Makes the sample page fill the window.
@@ -37,7 +40,7 @@ body {
     float: left;
     width: 30%;
     font-family: 'Geneva';
-    height: 95%;
+    height: 85%;
     margin: auto;
 }
 

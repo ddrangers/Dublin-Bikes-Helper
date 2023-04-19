@@ -26,7 +26,7 @@ function addWeather(weatherJson) {
     var temp = weatherJson.temp
     var temp_feel = weatherJson.temp_feel
     var wind_speed = weatherJson.wind_speed
-    weatherData = "weather: " + weather_main + " &nbsp;&nbsp;&nbsp;&nbsp;tempurature°: " + temp + "°" + "&nbsp;&nbsp;&nbsp;&nbsp;RealFeel°:" + temp_feel+ "&nbsp;&nbsp;&nbsp;&nbsp;wind speed:" + wind_speed
+    weatherData = "Weather: " + weather_main + " &nbsp;&nbsp;&nbsp;&nbsp;Temperature: " + temp + "°C" + "&nbsp;&nbsp;&nbsp;&nbsp;Feels Like: " + temp_feel+ "°C"+ "&nbsp;&nbsp;&nbsp;&nbsp;Wind Speed: " + wind_speed + "m/s"
     weatherStr = weatherStr + weatherData
     document.getElementById("weather").innerHTML = weatherStr;
 }
@@ -137,13 +137,14 @@ function getAvailableInfo(indexnumber) {
 // set the available stations and bikes on the left bar.
 function setBarInfo(content) {
     console.log("invoke setBarInfo");
-    var displayString = "Bike station No.&nbsp;"+ content.index;
-    displayString = displayString +  "<br>Station name:&nbsp;"+ content.name;
-    displayString = displayString +  "<br>Station status:&nbsp;"+ content.status;
-    displayString = displayString +  "<br>Address:&nbsp;"+ content.address;
-    displayString = displayString +  "<br>Current bike available:&nbsp;"+ content.bike_available;
-    displayString = displayString +  "<br>Current stand available:&nbsp;"+ content.bike_stand_available;
-    displayString = displayString +  "<br>Total bike stand:&nbsp;"+ content.bike_stand;
+    var displayString = "<p style=\"margin: 8px;color: grey;display: inline;\">Station ID:</p>"+ content.index + "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Station Name:</p>"+ content.name+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Address:</p>"+ content.address+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Status (Open/Closed):</p>"+ content.status+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Total Bike Stands:</p>"+ content.bike_stand+ "<br>";
+    displayString = displayString +  " <p style=\"margin: 8px; color: grey;color:green;display: inline;\">-----------------------------------------------------------</p>\n"+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Bike Availability:</p>"+ content.bike_available+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Parking Availability:</p>"+ content.bike_stand_available+ "<br>";
     document.getElementById("barDetail").innerHTML = displayString;
     console.log("displayString:" ,displayString);
 }
