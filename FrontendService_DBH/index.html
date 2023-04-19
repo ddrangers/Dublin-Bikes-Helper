@@ -49,10 +49,12 @@
             <p style="margin: 4px;">Current Bike Availability:</p>
             <p style="margin: 4px;">Current Parking Availability:</p>
         </div>
-        <h3>Predicted Bike and Parking Availability</h3>
+        <h3 style="margin-top: 50px;">Predicted Bike and Parking Availability</h3>
         <div id="aiPlot">
-            <p style="margin: 25px; color:red;"><b>Click on map markers to get <br>Predicted Bike and Parking Availability</b></p>
+            <p id="suggestionAI"; style="margin: 10px; color:red;"><b>Click on map markers to get <br>Predicted Bike and Parking Availability</b></p>
             <img src="db2.png" width="300" height="300" alt="Dublin Bikes Available">
+            <p id="bikePlotMissingNotice"; style="margin: 5px; color:red;"></p>
+            <p id="parkPlotMissingNotice"; style="margin: 5px; color:red;"></p>
 
             <!-- Click on markers to see predicted Bike Availability -->
 <!--            <div class="dropdown" >-->
@@ -75,7 +77,7 @@
         <div id="ChartStation"></div>
     </div>
 
-    <div id="weather"><h3 style="margin-top: 10px; margin-left: 20px; float: left; font-size: 20px;">Current Weather:</h3></div>
+    <div id="weather"><h3 style="margin-top: 5px;margin-bottom: 1px; margin-left: 20px; float: left; font-size: 20px;">Current Weather:</h3></div>
     <div id="map"></div>
     
     <div id="teamMember">Created by Team 16:  Jingao Liu | Cormac Lynch | Yongjie Lyu</div>
