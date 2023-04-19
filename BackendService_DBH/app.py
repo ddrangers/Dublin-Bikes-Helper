@@ -182,7 +182,11 @@ def stationsPredict(current_bike_station_id):
         return weather_list[:24]
 
     def get_station_number(file_name):
-        return int(file_name.split("_")[0].replace("randomforest", ""))
+        if file_name.endswith('.pkl'):
+            return int(file_name.split("_")[0].replace("randomforest", ""))
+        else:
+            pass
+
 
     def get_model_type(file_name):
         if file_name.endswith("_bike.pkl"):
