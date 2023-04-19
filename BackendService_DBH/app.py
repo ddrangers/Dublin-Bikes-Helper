@@ -7,9 +7,12 @@ import pandas as pd
 import pickle
 import os
 import datetime
+
 from flask_cors import CORS
 
 app = Flask(__name__)
+
+
 CORS(app)
 
 @app.route('/stations')
@@ -178,11 +181,6 @@ def stationsPredict(current_bike_station_id):
 
         return weather_list[:24]
 
-    weather_list = process_weather_data(weather_data)
-    # print(weather_list)
-    # length_of_weather_list = len(weather_list)
-    # print("Length of weather_list:", length_of_weather_list)
-
     def get_station_number(file_name):
         return int(file_name.split("_")[0].replace("randomforest", ""))
 
@@ -203,42 +201,23 @@ def stationsPredict(current_bike_station_id):
                 return model
         return None
 
-    model_park = load_model('park', current_bike_station_id)
-    model_bike = load_model('bike', current_bike_station_id)
-    predictions_park = []
-    predictions_bike = []
-    if model_park is not None and model_bike is not None:
-        for X_web in weather_list:
-            y_web_park = model_park.predict([X_web])
-            predictions_park.append(int(y_web_park.round(0)))
+    # Process weather data and load models
+    weather_list = process_weather_data(weather_data)
+    model_park = load_model("park", current_bike_station_id)
+    model_bike = load_model("bike", current_bike_station_id)
 
-            y_web_bike = model_bike.predict([X_web])
-            predictions_bike.append(int(y_web_bike.round(0)))
+    # Make predictions
+    predictions_dict = {}
+    for model_type, model in [("park", model_park), ("bike", model_bike)]:
+        if model is None:
+            predictions_dict[
+                f"{model_type}_predictions"] = f"Cannot find the {model_type} available model file for station number {current_bike_station_id}"
+        else:
+            predictions = [int(model.predict([X_web]).round(0)) for X_web in weather_list]
+            predictions_dict[f"{model_type}_predictions"] = predictions
 
-    elif model_park is None and model_bike is not None:
-        predictions_park = 'Cannot find the park available model file for station number '+str(current_bike_station_id)
-        for X_web in weather_list:
-            y_web_bike = model_bike.predict([X_web])
-            predictions_bike.append(int(y_web_bike.round(0)))
-    elif model_bike is None and model_park is not None:
-        for X_web in weather_list:
-            y_web_park = model_park.predict([X_web])
-            predictions_park.append(int(y_web_park.round(0)))
-        predictions_bike = "Cannot find the bike available model file for station number "+str(current_bike_station_id)
-    else:
-        predictions_park = 'Cannot find the park available model file for station number '+str(current_bike_station_id)
-        predictions_bike = "Cannot find the bike available model file for station number "+str(current_bike_station_id)
-    # Create a dictionary with both predictions
-    predictions_dict = {
-        'park_predictions': predictions_park,
-        'bike_predictions': predictions_bike
-    }
-    # Convert the dictionary to JSON format
-    predictions_json = json.dumps(predictions_dict)
-    return predictions_json
-
-
-
+    # Convert to JSON and return
+    return json.dumps(predictions_dict)
 
 
 @app.route('/stations/<int:indexnumber>')
@@ -281,5 +260,3 @@ def station(indexnumber):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
