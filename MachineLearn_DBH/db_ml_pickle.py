@@ -30,6 +30,7 @@ from sklearn import tree
 file_path_csv_weather = Path('C:\\Users\\corma\\Documents\\GitHub\\Dublin-Bikes-Helper\\MachineLearn_DBH\\weather_info_final.csv')
 file_path_csv_bike = Path('C:\\Users\\corma\\Documents\\GitHub\\Dublin-Bikes-Helper\\MachineLearn_DBH\\bike_info_final.csv')
 file_path_pickle = Path('C:\\Users\\corma\\Documents\\GitHub\\Dublin-Bikes-Helper\\MachineLearn_DBH\\Pickle Files\\')
+file_path_R2 = Path('C:\\Users\\corma\\Documents\\GitHub\\Dublin-Bikes-Helper\\MachineLearn_DBH\\R2 Files\\')
 #Read files and create Dataframes
 df = pd.read_csv(file_path_csv_bike,index_col=False)
 dfw = pd.read_csv(file_path_csv_weather,index_col=False)
@@ -80,12 +81,16 @@ dfbikeweath = pd.merge(df, dfw, on='TIME', how='inner')
 train_set,test_set = train_test_split(dfbikeweath,test_size=0.2,random_state=42)
 
 #Create New Lists for holding results of Model Runs
-randommodel_mser_train_list = []
-randommodel_mser_test_list = []
-randommodel_stationid = []
+linreg_m_mser_train_list = []
+linreg_m_mser_test_list = []
+linreg_m_stationid = []
+
+randomforest_mser_train_list = []
+randomforest_mser_test_list = []
+randomforest_stationid = []
 
 #Choose whether to predict bike availability or parking availability
-bikeprediction = False
+bikeprediction = True
 if bikeprediction == True:
     predict = 'bike_available'
     fileappend = 'bike'
@@ -108,13 +113,13 @@ for i in range(1,120):
         #Weather parameters (X) we are using for prediction of Bike Availability
         features = ['weather_main','clouds','tempcel', 'weather_id', 'wind_speed','tempcel_feel','MONTH_x','DAY_x','HOUR_x']
 
-        #Use Random Forest as prediction model
+        # #Use Random Forest as prediction model#############################################################
         X = train_set[features].loc[train_set['station_select']]
         randomforest = RandomForestRegressor()
         randomforest.fit(X, y)
         randomforest_predictions = randomforest.predict(X).round(0)
 
-        #Test the model on the Test Set
+        # #Test the model on the Test Set
         test_set['station_select'] = (test_set['number']==stationid)
         #test_set['station_select'] = (test_set['YEAR_y']==2023) & (test_set['MONTH_y']==3) & (test_set['number']==stationid)
         y_test = test_set[predict].loc[test_set['station_select']]
@@ -126,24 +131,58 @@ for i in range(1,120):
         randomforest_mser = np.sqrt(randomforest_mse).round(2)
         randomforest_mse_test = mean_squared_error(y_test,randomforest_predictions_test)
         randomforest_mser_test = np.sqrt(randomforest_mse_test).round(2)
-        randommodel_mser_test_list.append(randomforest_mser_test)
-        randommodel_mser_train_list.append(randomforest_mser)
-        randommodel_stationid.append(stationid)
+        randomforest_mser_test_list.append(randomforest_mser_test)
+        randomforest_mser_train_list.append(randomforest_mser)
+        randomforest_stationid.append(stationid)
     
-        # Serialize model object (in this case Random Forest) into a file and send to disk using pickle
-        filename = f'{file_path_pickle}\\randomforest{stationid}_{fileappend}.pkl'
-        print(filename)
-        with open(filename, 'wb') as handle:
-            pickle.dump(randomforest, handle, pickle.HIGHEST_PROTOCOL)
+    #Use Linear Regression as prediction model#############################################################
+        # X = train_set[features].loc[train_set['station_select']]
+        # linreg_m = LinearRegression()
+        # linreg_m.fit(X, y)
+        # linreg_m_predictions = linreg_m.predict(X).round(0)
+
+        # #Test the model on the Test Set
+        # test_set['station_select'] = (test_set['number']==stationid)
+        # #test_set['station_select'] = (test_set['YEAR_y']==2023) & (test_set['MONTH_y']==3) & (test_set['number']==stationid)
+        # y_test = test_set[predict].loc[test_set['station_select']]
+        # X_test = test_set[features].loc[test_set['station_select']]
+        # linreg_m_predictions_test = linreg_m.predict(X_test).round(0)
+
+        # #Calculate R2 for Training Set and Test Set Data
+        # linreg_m_mse = mean_squared_error(y,linreg_m_predictions)
+        # linreg_m_mser = np.sqrt(linreg_m_mse).round(2)
+        # linreg_m_mse_test = mean_squared_error(y_test,linreg_m_predictions_test)
+        # linreg_m_mser_test = np.sqrt(linreg_m_mse_test).round(2)
+        # linreg_m_mser_test_list.append(linreg_m_mser_test)
+        # linreg_m_mser_train_list.append(linreg_m_mser)
+        # linreg_m_stationid.append(stationid)
+
+        # # Serialize model object (in this case Random Forest) into a file and send to disk using pickle
+        # filename = f'{file_path_pickle}\\randomforest{stationid}_{fileappend}.pkl'
+        # print(filename)
+        # with open(filename, 'wb') as handle:
+        #     pickle.dump(randomforest, handle, pickle.HIGHEST_PROTOCOL)
     except:
         print(f'No Station with ID number {i} exists')
-#Print out the results
-results_file = f'{file_path_pickle}\\R2_randomforest_{fileappend}.txt'
-with open(results_file,'a') as f:
-    f.write(f'R2 Comparisons (Training vs Test Set) for stations: {fileappend} predictions \n---------------------------------------------------------------------')
+
+#Print out the results - Linear Regression
+# results_file = f'{file_path_R2}\\R2_linreg_m_{fileappend}.txt'
+# with open(results_file,'a') as f:
+#     f.write(f'R2 Comparisons (Training vs Test Set) for stations: {fileappend} predictions \nLINEAR REGRESSION (MULTIPLE FEATURES)\n---------------------------------------------------------------------')
+         
+# for i in range(len(linreg_m_stationid)):
+#     print(f'\nFor station: {linreg_m_stationid[i]} | R2 (Training) = {linreg_m_mser_train_list[i]} -- R2 (Test) = {linreg_m_mser_test_list[i]}')
+#     with open(results_file,'a') as f:
+#          f.write(f'\nFor station: {linreg_m_stationid[i]} | R2 (Training) = {linreg_m_mser_train_list[i]} -- R2 (Test) = {linreg_m_mser_test_list[i]}')
         
-for i in range(len(randommodel_stationid)):
-    print(f'\nFor station: {randommodel_stationid[i]} | R2 (Training) = {randommodel_mser_train_list[i]} -- R2 (Test) = {randommodel_mser_test_list[i]}')
+
+#         #Print out the results - Random Forest
+results_file = f'{file_path_R2}\\R2_randomforest_m_{fileappend}.txt'
+with open(results_file,'a') as f:
+    f.write(f'R2 Comparisons (Training vs Test Set) for stations: {fileappend} predictions \nRANDOM FOREST\n---------------------------------------------------------------------')
+         
+for i in range(len(randomforest_stationid)):
+    print(f'\nFor station: {randomforest_stationid[i]} | R2 (Training) = {randomforest_mser_train_list[i]} -- R2 (Test) = {randomforest_mser_test_list[i]}')
     with open(results_file,'a') as f:
-         f.write(f'\nFor station: {randommodel_stationid[i]} | R2 (Training) = {randommodel_mser_train_list[i]} -- R2 (Test) = {randommodel_mser_test_list[i]}')
+         f.write(f'\nFor station: {randomforest_stationid[i]} | R2 (Training) = {randomforest_mser_train_list[i]} -- R2 (Test) = {randomforest_mser_test_list[i]}')
         
