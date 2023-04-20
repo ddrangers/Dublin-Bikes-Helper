@@ -26,7 +26,7 @@ function addWeather(weatherJson) {
     var temp = weatherJson.temp
     var temp_feel = weatherJson.temp_feel
     var wind_speed = weatherJson.wind_speed
-    weatherData = "weather: " + weather_main + " &nbsp;&nbsp;&nbsp;&nbsp;tempurature°: " + temp + "°" + "&nbsp;&nbsp;&nbsp;&nbsp;RealFeel°:" + temp_feel+ "&nbsp;&nbsp;&nbsp;&nbsp;wind speed:" + wind_speed
+    weatherData = "Weather: " + weather_main + " &nbsp;&nbsp;&nbsp;&nbsp;Temperature: " + temp + "°C" + "&nbsp;&nbsp;&nbsp;&nbsp;Feels Like: " + temp_feel+ "°C"+ "&nbsp;&nbsp;&nbsp;&nbsp;Wind Speed: " + wind_speed + "m/s"
     weatherStr = weatherStr + weatherData
     document.getElementById("weather").innerHTML = weatherStr;
 }
@@ -92,6 +92,7 @@ function addMarkers(stationsJson, map) {
                 const { target } = domEvent;
                 infoWindow.close();
                 var Content = getAvailableInfo(station.indexNumber);  //Content is a parsed JSON obj
+                setAiPlot(station.indexNumber); // set the AIplot
                 infoWindow.setContent(marker.title + "<br>" + "Address:" + Content.address);
                 setBarInfo(Content);
                 // setAiPlot(station.indexNumber);
@@ -136,13 +137,14 @@ function getAvailableInfo(indexnumber) {
 // set the available stations and bikes on the left bar.
 function setBarInfo(content) {
     console.log("invoke setBarInfo");
-    var displayString = "Bike station No.&nbsp;"+ content.index;
-    displayString = displayString +  "<br>Station name:&nbsp;"+ content.name;
-    displayString = displayString +  "<br>Station status:&nbsp;"+ content.status;
-    displayString = displayString +  "<br>Address:&nbsp;"+ content.address;
-    displayString = displayString +  "<br>Current bike available:&nbsp;"+ content.bike_available;
-    displayString = displayString +  "<br>Current stand available:&nbsp;"+ content.bike_stand_available;
-    displayString = displayString +  "<br>Total bike stand:&nbsp;"+ content.bike_stand;
+    var displayString = "<p style=\"margin: 8px;color: grey;display: inline;\">Station ID:</p>"+ content.index + "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Station Name:</p>"+ content.name+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Address:</p>"+ content.address+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Status (Open/Closed):</p>"+ content.status+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Total Bike Stands:</p>"+ content.bike_stand+ "<br>";
+    displayString = displayString +  " <p style=\"margin: 8px; color: grey;color:green;display: inline;\">-----------------------------------------------------------</p>\n"+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Bike Availability:</p>"+ content.bike_available+ "<br>";
+    displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Parking Availability:</p>"+ content.bike_stand_available+ "<br>";
     document.getElementById("barDetail").innerHTML = displayString;
     console.log("displayString:" ,displayString);
 }
@@ -161,43 +163,79 @@ function setAiPlot(current_bike_station_id) {
     })
         .then(response => response.json())
         .then((data) => {
-            console.log("fetch getAvailableInfo response:", typeof data);
-            // return the available bike station info from the reponse file
+            console.log("Fetch get AI plot data response:", typeof data, data);
+            // bike: determine whether the backend is returning null value
+            if (data.bike_predictions[0] == "C")
+            {
+                // display the missing AI message
+                const p = document.getElementById('bikePlotMissingNotice');
+                p.textContent = 'Sorry, the AI bike predictions is currently unavailable.';
+                // delete the under lying graph
+                const div = document.getElementById('ChartBike');
+                div.innerHTML = '';
+                // print message
+                console.log("bike predictions is null");
+            } else {
+                console.log("bike predictions is available");
+                const p = document.getElementById('bikePlotMissingNotice');
+                p.textContent = '';
+                drawChart1(data);
+            }
+            // station: determine whether the backend is returning null value
+            if (data.park_predictions[0] == "C")
+            {
+                // display the missing AI message
+                const p = document.getElementById('parkPlotMissingNotice');
+                p.textContent = 'Sorry, the AI park predictions is currently unavailable.';
+                // delete the under lying graph
+                const div = document.getElementById('ChartStation');
+                console.log("station predictions is null");
+            } else {
+                console.log("station predictions is available");
+                const p = document.getElementById('parkPlotMissingNotice');
+                p.textContent = '';
+                drawChart2(data);
+            }
         })
         .catch(error => console.error(error));
-    // Use drawChart1 and drawChart2 function to generate the prediction plot
-    
+
+    // delete the default bike img
+    const img = document.querySelector('img[src="db2.png"]');
+    img.style.display = 'none';
+
+    // delete the default suggestion
+    const p = document.getElementById('suggestionAI');
+    p.style.display = 'none';
 }
 
-
-function drawChart1() {
+// bike chart
+function drawChart1(data) {
     var data1 = google.visualization.arrayToDataTable([
         ["Hours", "Availiable bike num", { role: "style" } ],
-
-        ["1", 11.94, "gold"],
-        ["2", 10.49, "gold"],
-        ["3", 19.30, "gold"],
-        ["4", 21.45, "gold"],
-        ["5", 21.85, "gold"],
-        ["6", 21.45, "gold"],
-        ["7", 20.45, "gold"],
-        ["8", 21.85, "gold"],
-        ["9", 21.45, "gold"],
-        ["10", 21.45, "gold"],
-        ["11", 13.45, "gold"],
-        ["12", 13.45, "gold"],
-        ["13", 2.45, "gold"],
-        ["14", 2.45, "gold"],
-        ["15", 2.45, "gold"],
-        ["16", 3.45, "gold"],
-        ["17", 3.45, "gold"],
-        ["18", 4.45, "gold"],
-        ["19", 7.45, "gold"],
-        ["20", 8.45, "gold"],
-        ["21", 12.45, "gold"],
-        ["22", 12.45, "gold"],
-        ["23", 11.45, "gold"],
-        ["24", 11.45, "gold"],
+        ["1", data.bike_predictions[0], "gold"],
+        ["2", data.bike_predictions[1], "silver"],
+        ["3", data.bike_predictions[2], "yellow"],
+        ["4", data.bike_predictions[3], "pink"],
+        ["5", data.bike_predictions[4], "maroon"],
+        ["6", data.bike_predictions[5], "orange"],
+        ["7", data.bike_predictions[6], "gold"],
+        ["8", data.bike_predictions[7], "silver"],
+        ["9", data.bike_predictions[8], "yellow"],
+        ["10", data.bike_predictions[9], "pink"],
+        ["11", data.bike_predictions[10], "maroon"],
+        ["12", data.bike_predictions[11], "orange"],
+        ["13", data.bike_predictions[12], "gold"],
+        ["14", data.bike_predictions[13], "silver"],
+        ["15", data.bike_predictions[14], "yellow"],
+        ["16", data.bike_predictions[15], "pink"],
+        ["17", data.bike_predictions[16], "maroon"],
+        ["18", data.bike_predictions[17], "orange"],
+        ["19", data.bike_predictions[18], "gold"],
+        ["20", data.bike_predictions[19], "silver"],
+        ["21", data.bike_predictions[20], "yellow"],
+        ["22", data.bike_predictions[21], "pink"],
+        ["23", data.bike_predictions[22], "maroon"],
+        ["24", data.bike_predictions[23], "orange"],
     ]);
 
     var view = new google.visualization.DataView(data1);
@@ -210,7 +248,7 @@ function drawChart1() {
 
     var options = {
         title: "Bike availability (next 24 hours)",
-        width: 383,
+        width: 433,
         height: 285,
         bar: {groupWidth: "95%"},
         legend: { position: "none" },
@@ -220,34 +258,36 @@ function drawChart1() {
     chart.draw(view, options);
 }
 
-function drawChart2() {
-    var data2 = google.visualization.arrayToDataTable([
-        ["Hours", "Availiable bike num", { role: "style" } ],
+// station chart
+function drawChart2(data) {
 
-        ["1", 11.94, "gold"],
-        ["2", 10.49, "gold"],
-        ["3", 19.30, "gold"],
-        ["4", 21.45, "gold"],
-        ["5", 21.85, "gold"],
-        ["6", 21.45, "gold"],
-        ["7", 20.45, "gold"],
-        ["8", 21.85, "gold"],
-        ["9", 21.45, "gold"],
-        ["10", 21.45, "gold"],
-        ["11", 13.45, "gold"],
-        ["12", 13.45, "gold"],
-        ["13", 2.45, "gold"],
-        ["14", 2.45, "gold"],
-        ["15", 2.45, "gold"],
-        ["16", 3.45, "gold"],
-        ["17", 3.45, "gold"],
-        ["18", 4.45, "gold"],
-        ["19", 7.45, "gold"],
-        ["20", 8.45, "gold"],
-        ["21", 12.45, "gold"],
-        ["22", 12.45, "gold"],
-        ["23", 11.45, "gold"],
-        ["24", 11.45, "gold"],
+    var data2 = google.visualization.arrayToDataTable([
+        ["Hours", "Availiable station num", { role: "style" } ],
+
+        ["1", data.park_predictions[0], "gold"],
+        ["2", data.park_predictions[1], "silver"],
+        ["3", data.park_predictions[2], "yellow"],
+        ["4", data.park_predictions[3], "pink"],
+        ["5", data.park_predictions[4], "maroon"],
+        ["6", data.park_predictions[5], "orange"],
+        ["7", data.park_predictions[6], "gold"],
+        ["8", data.park_predictions[7], "silver"],
+        ["9", data.park_predictions[8], "yellow"],
+        ["10", data.park_predictions[9], "pink"],
+        ["11", data.park_predictions[10], "maroon"],
+        ["12", data.park_predictions[11], "orange"],
+        ["13", data.park_predictions[12], "gold"],
+        ["14", data.park_predictions[13], "silver"],
+        ["15", data.park_predictions[14], "yellow"],
+        ["16", data.park_predictions[15], "pink"],
+        ["17", data.park_predictions[16], "maroon"],
+        ["18", data.park_predictions[17], "orange"],
+        ["19", data.park_predictions[18], "gold"],
+        ["20", data.park_predictions[19], "silver"],
+        ["21", data.park_predictions[20], "yellow"],
+        ["22", data.park_predictions[21], "pink"],
+        ["23", data.park_predictions[22], "maroon"],
+        ["24", data.park_predictions[23], "orange"],
     ]);
 
     var view = new google.visualization.DataView(data2);
@@ -260,7 +300,7 @@ function drawChart2() {
 
     var options = {
         title: "Station availability (next 24 hours)",
-        width: 383,
+        width: 433,
         height: 285,
         bar: {groupWidth: "95%"},
         legend: { position: "none" },

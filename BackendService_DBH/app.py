@@ -118,7 +118,7 @@ def weather():
 
 @app.route('/stationsPredict/<int:current_bike_station_id>')
 def stationsPredict(current_bike_station_id):
-    pickle_dir = "/Users/lvyongjie/Downloads/Pickle Files"
+    pickle_dir = "/Users/lvyongjie/Library/CloudStorage/OneDrive-UniversityCollegeDublin/UCD File/UCD Study/Software Programming/Dublin-Bikes-Helper/BackendService_DBH/ML_prediction_file"
     pickle_files = os.listdir(pickle_dir)
     with open("config.json", "r") as jsonfile:
         configFile = json.load(jsonfile)
@@ -182,7 +182,11 @@ def stationsPredict(current_bike_station_id):
         return weather_list[:24]
 
     def get_station_number(file_name):
-        return int(file_name.split("_")[0].replace("randomforest", ""))
+        if file_name.endswith('.pkl'):
+            return int(file_name.split("_")[0].replace("randomforest", ""))
+        else:
+            pass
+
 
     def get_model_type(file_name):
         if file_name.endswith("_bike.pkl"):

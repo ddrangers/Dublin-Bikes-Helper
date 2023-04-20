@@ -3,27 +3,30 @@
  * that contains the map.
  */
 #weather {
+    font-family: 'Geneva';
     background-color: aliceblue;
-    height: 6%;
+    height: 7%;
     float: right;
-    width: 75%;
+    width: 70%;
     font-size: larger;
     text-align: center;
 }
 #map {
     height: 78%;
     float: right;
-    width: 75%;
+    width: 70%;
     border: 2px solid black;
     box-sizing: border-box;
 }
+
+
 
 /*
  * Optional: Makes the sample page fill the window.
  */
 html,
 body {
-    height: 105%;
+    height: 120%;
     margin: 3px;
     padding: 0;
     background-color: lightblue;
@@ -35,7 +38,7 @@ body {
     text-align: center;
     background-color: aliceblue;
     float: left;
-    width: 24%;
+    width: 30%;
     font-family: 'Geneva';
     height: 85%;
     margin: auto;
@@ -77,7 +80,7 @@ body {
 }
 
 #aiPlot{
-    border: 2px solid black; /* sets border to 1px thickness, solid style, and black color */
+    /*border: 2px solid black; !* sets border to 1px thickness, solid style, and black color *!*/
     padding: 5px; /* adds padding to the inside of the box */
     width: 90%;
     height: auto; /* sets the height of the box */
