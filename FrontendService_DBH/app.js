@@ -211,7 +211,7 @@ function setAiPlot(current_bike_station_id) {
 // bike chart
 function drawChart1(data) {
     var data1 = google.visualization.arrayToDataTable([
-        ["Hours", "Availiable bike num", { role: "style" } ],
+        ["Hours", "Available Bikes", { role: "style" } ],
         ["1", data.bike_predictions[0], "gold"],
         ["2", data.bike_predictions[1], "silver"],
         ["3", data.bike_predictions[2], "yellow"],
@@ -247,7 +247,7 @@ function drawChart1(data) {
         2]);
 
     var options = {
-        title: "Bike availability (next 24 hours)",
+        title: "Todays Bike Availability",
         width: 433,
         height: 285,
         bar: {groupWidth: "95%"},
@@ -262,7 +262,7 @@ function drawChart1(data) {
 function drawChart2(data) {
 
     var data2 = google.visualization.arrayToDataTable([
-        ["Hours", "Availiable station num", { role: "style" } ],
+        ["Hours", "Available Parking", { role: "style" } ],
 
         ["1", data.park_predictions[0], "gold"],
         ["2", data.park_predictions[1], "silver"],
@@ -299,7 +299,7 @@ function drawChart2(data) {
         2]);
 
     var options = {
-        title: "Station availability (next 24 hours)",
+        title: "Todays Parking Availability",
         width: 433,
         height: 285,
         bar: {groupWidth: "95%"},
