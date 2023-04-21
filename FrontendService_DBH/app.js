@@ -96,36 +96,22 @@ function addMarkers(stationsJson, map) {
                 infoWindow.setContent(marker.title);
                 // invoke function
                 console.log("invoke markers listener function");
-                setAiDetail(current_bike_station_id)
+                setAiandDetail(current_bike_station_id)
                 infoWindow.open(marker.map, marker);
             });
         }
     });
 }
 
-function setAiDetail(indexnumber) {
-    console.log("invoke setAiDetail");
+function setAiandDetail(indexnumber) {
+    console.log("invoke set Ai and Detail");
     setBarInfo(indexnumber);
-    // AI plot info
-    setAiPlot(indexnumber); // set the AIplot
+    setAiPlot(indexnumber);
 }
 
 // get the available stations and bikes. (Input station index number)
 function getAvailableInfo(indexnumber) {
-    // fetch the Json file which contains the coordinates of each station
-    fetch(`http://3.88.162.45/stations/${indexnumber}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then((data) => {
-            console.log("Fetch get station detail availableInfo response:", typeof data, data);
-            // return the available bike station info from the reponse file
-            parsedObjInfo = data;
-        })
-        .catch(error => console.error(error));
+
 
     return parsedObjInfo;
 }
@@ -134,17 +120,28 @@ function getAvailableInfo(indexnumber) {
 // set the available stations and bikes on the left bar.
 function setBarInfo(stationId) {
     console.log("invoke setBarInfo");
-    var content = getAvailableInfo(stationId);  //Content is a parsed JSON obj
-    var displayString = "<p style=\"margin: 8px;color: grey;display: inline;\">Station ID:</p>"+ content.index + "<br>";
-    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Station Name:</p>"+ content.name+ "<br>";
-    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Address:</p>"+ content.address+ "<br>";
-    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Status (Open/Closed):</p>"+ content.status+ "<br>";
-    displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Total Bike Stands:</p>"+ content.bike_stand+ "<br>";
-    displayString = displayString +  " <p style=\"margin: 8px; color: grey;color:green;display: inline;\">-----------------------------------------------------------</p>\n"+ "<br>";
-    displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Bike Availability:</p>"+ content.bike_available+ "<br>";
-    displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Parking Availability:</p>"+ content.bike_stand_available+ "<br>";
-    document.getElementById("barDetail").innerHTML = displayString;
-    console.log("displayString:" ,displayString);
+    // fetch the Json file which contains the coordinates of each station
+    fetch(`http://3.88.162.45/stations/${stationId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then((data) => {
+            console.log("Fetch get station detail availableInfo response:", typeof data, data);
+            var displayString = "<p style=\"margin: 8px;color: grey;display: inline;\">Station ID:</p>"+ data.index + "<br>";
+            displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Station Name:</p>"+ data.name+ "<br>";
+            displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Address:</p>"+ data.address+ "<br>";
+            displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Status (Open/Closed):</p>"+ data.status+ "<br>";
+            displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Total Bike Stands:</p>"+ data.bike_stand+ "<br>";
+            displayString = displayString +  " <p style=\"margin: 8px; color: grey;color:green;display: inline;\">-----------------------------------------------------------</p>\n"+ "<br>";
+            displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Bike Availability:</p>"+ data.bike_available+ "<br>";
+            displayString = displayString +  "<p style=\"margin: 8px; color: grey;color:green;display: inline;\">Current Parking Availability:</p>"+ data.bike_stand_available+ "<br>";
+            document.getElementById("barDetail").innerHTML = displayString;
+            console.log("barDetail displayString:" ,displayString);
+        })
+        .catch(error => console.error(error));
 }
 
 // set the AI predictions on the left bar.
