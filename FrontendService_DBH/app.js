@@ -11,7 +11,7 @@ let markers = [];
 // get the current weather info
 function getWeather() {
     // fetch the weather info
-    fetch("http://127.0.0.1:5000/weather")
+    fetch("http://3.88.162.45/weather")
         .then((response) => response.json())  //parsing the response body text as JSON
         .then((data) => {
             console.log("fetch current weather info response:", typeof data)
@@ -50,7 +50,7 @@ window.initMap = initMap;
 // get the static station list
 function getStationsList(map) {
     // fetch the Json file which contains the coordinates of each station
-    fetch("http://127.0.0.1:5000/stations")
+    fetch("http://3.88.162.45/stations")
         .then((response) => response.json())  //parsing the response body text as JSON
         .then((data) => {
             console.log("fetch static station list response:", typeof data)
@@ -70,7 +70,6 @@ function addMarkers(stationsJson, map) {
         if ( map instanceof google.maps.Map) {
             i = i+1;
             const pinView = new google.maps.marker.PinView({
-                glyph: `${i + 1}`,
                 background: "#FFBF00",
                 // 00FFFF green
                 // FFBF00 yellow
@@ -91,32 +90,30 @@ function addMarkers(stationsJson, map) {
             marker.addListener("click", ({ domEvent, latLng }) => {
                 const { target } = domEvent;
                 infoWindow.close();
-                var Content = getAvailableInfo(station.indexNumber);  //Content is a parsed JSON obj
-                setAiPlot(station.indexNumber); // set the AIplot
-                infoWindow.setContent(marker.title + "<br>" + "Address:" + Content.address);
-                setBarInfo(Content);
-                // setAiPlot(station.indexNumber);
                 current_bike_station_id = station.indexNumber;
                 console.log("The current selected marker is:", current_bike_station_id);
+                // detail info
+                infoWindow.setContent(marker.title);
+                // invoke function
+                console.log("invoke markers listener function");
+                setAiDetail(current_bike_station_id)
                 infoWindow.open(marker.map, marker);
             });
         }
     });
-    //test marker
-    // const marker = new google.maps.marker.AdvancedMarkerView({
-    //     map,
-    //     position: { lat: 53.3515, lng: -6.25527 },
-    //     title: "Test Marker",
-    // });
-    // markers.push(marker);
-
 }
 
+function setAiDetail(indexnumber) {
+    console.log("invoke setAiDetail");
+    setBarInfo(indexnumber);
+    // AI plot info
+    setAiPlot(indexnumber); // set the AIplot
+}
 
 // get the available stations and bikes. (Input station index number)
 function getAvailableInfo(indexnumber) {
     // fetch the Json file which contains the coordinates of each station
-    fetch(`http://127.0.0.1:5000/stations/${indexnumber}`, {
+    fetch(`http://3.88.162.45/stations/${indexnumber}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -135,8 +132,9 @@ function getAvailableInfo(indexnumber) {
 
 
 // set the available stations and bikes on the left bar.
-function setBarInfo(content) {
+function setBarInfo(stationId) {
     console.log("invoke setBarInfo");
+    var content = getAvailableInfo(stationId);  //Content is a parsed JSON obj
     var displayString = "<p style=\"margin: 8px;color: grey;display: inline;\">Station ID:</p>"+ content.index + "<br>";
     displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Station Name:</p>"+ content.name+ "<br>";
     displayString = displayString +  "<p style=\"margin: 8px;color: grey;display: inline;\">Address:</p>"+ content.address+ "<br>";
@@ -151,11 +149,9 @@ function setBarInfo(content) {
 
 // set the AI predictions on the left bar.
 function setAiPlot(current_bike_station_id) {
-    // use the select option as the parameter
-    // var showWeekdays = document.getElementById("weekdays");
-    // var weekdays = showWeekdays.value;
+    console.log("invoke setAiPlot");
     // fetch the Json file which contains the coordinates of each station
-    fetch(`http://127.0.0.1:5000/stationsPredict/${current_bike_station_id}`, {
+    fetch(`http://3.88.162.45/stationsPredict/${current_bike_station_id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -239,12 +235,7 @@ function drawChart1(data) {
     ]);
 
     var view = new google.visualization.DataView(data1);
-    view.setColumns([0, 1,
-        { calc: "stringify",
-            sourceColumn: 1,
-            type: "string",
-            role: "annotation" },
-        2]);
+    view.setColumns([0, 1, 2]);
 
     var options = {
         title: "Todays Bike Availability",
@@ -291,12 +282,7 @@ function drawChart2(data) {
     ]);
 
     var view = new google.visualization.DataView(data2);
-    view.setColumns([0, 1,
-        { calc: "stringify",
-            sourceColumn: 1,
-            type: "string",
-            role: "annotation" },
-        2]);
+    view.setColumns([0, 1, 2]);
 
     var options = {
         title: "Todays Parking Availability",
@@ -304,6 +290,7 @@ function drawChart2(data) {
         height: 285,
         bar: {groupWidth: "95%"},
         legend: { position: "none" },
+
     };
     var chart = new google.visualization.ColumnChart(document.getElementById("ChartStation"));
     chart.draw(view, options);
