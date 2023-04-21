@@ -109,14 +109,6 @@ function setAiandDetail(indexnumber) {
     setAiPlot(indexnumber);
 }
 
-// get the available stations and bikes. (Input station index number)
-function getAvailableInfo(indexnumber) {
-
-
-    return parsedObjInfo;
-}
-
-
 // set the available stations and bikes on the left bar.
 function setBarInfo(stationId) {
     console.log("invoke setBarInfo");
