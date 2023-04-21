@@ -1,0 +1,13 @@
+target/
+out/
+META-INF/
+!**/src/main/**
+!**/src/test/**
+logs/**
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+ML_prediction_file/
