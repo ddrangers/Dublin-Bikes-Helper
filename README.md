@@ -32,6 +32,6 @@ Our front-end application (what the user sees) uses the backend ‘Flask’ appl
 
 ![Loading architectural](https://github.com/ddrangers/Dublin-Bikes-Helper/blob/main/Deployment_DBH/SCR-20230616-qink.png)
 
-This is a [Link to Team Project Report]([https://www.google.com](https://drive.google.com/file/d/1KB-yEbXPoYGJePXZjVJho3lNMFpHjprZ/view?usp=sharing)).
+This is a [Link to Team Project Report](https://drive.google.com/file/d/1KB-yEbXPoYGJePXZjVJho3lNMFpHjprZ/view?usp=sharing).
 
 
