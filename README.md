@@ -3,6 +3,11 @@ UCD SoftwareEng Group Project
 
 Welcome to Dublin-Bikes-Helper, a comprehensive web application designed to enhance your cycling experience in the heart of Dublin City. Launched as part of a group project at UCD Software Engineering, our platform aims to streamline the use of the dublinbikes service, a popular public bike rental scheme initiated in 2009.
 
+This is a [Link to Team Project Report](https://drive.google.com/file/d/1KB-yEbXPoYGJePXZjVJho3lNMFpHjprZ/view?usp=sharing).
+
+This is a [Link to Project Deployment Report](https://ddrangers.notion.site/Nginx-Deployment-Manual-Dublin-Bikes-Helper-Website-85ca30ac197b417498f0a876323dc667?pvs=4).
+
+
 As a well-established mode of transportation, Dublinbikes has over 114 stations scattered around the city center, enabling citizens and tourists to easily navigate the city. Dublin-Bikes-Helper leverages this infrastructure to offer a more personalized, convenient, and efficient service for its users.
 
 We aspire to revolutionize your cycling journey through Dublin-Bikes-Helper, providing critical information to help plan your routes, locate nearby stations, and much more. Our platform is built with a simple objective - to make the dublinbikes service as user-friendly and accessible as possible. Join us and transform the way you explore Dublin today!
@@ -32,6 +37,5 @@ Our front-end application (what the user sees) uses the backend ‘Flask’ appl
 
 ![Loading architectural](https://github.com/ddrangers/Dublin-Bikes-Helper/blob/main/Deployment_DBH/SCR-20230616-qink.png)
 
-This is a [Link to Team Project Report](https://drive.google.com/file/d/1KB-yEbXPoYGJePXZjVJho3lNMFpHjprZ/view?usp=sharing).
 
 
